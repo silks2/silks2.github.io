@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The SilkScreen Studios</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="extras/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="extras/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="extras/favicon-16x16.png">
+    <link rel="manifest" href="extras/site.webmanifest">
+</head>
+<link href='https://fonts.googleapis.com/css?family=Fredoka One' rel='stylesheet'>
+<style>
+    a:link {
+            color: deepskyblue;
+            background-color: transparent;
+            text-decoration: none;
+    }
+    a:visited {
+            color: blueviolet;
+            background-color: transparent;
+            text-decoration: none;
+    }
+    a:hover {
+            color: lightskyblue;
+            background-color: transparent;
+            text-decoration: underline;
+    }
+    a:active {
+            color: steelblue;
+            background-color: transparent;
+            text-decoration: underline;
+    }
+    body {
+        font-family: 'Fredoka One';
+        font-size: 22px;
+        background-color: #363636;
+        color: white;
+    }
+    .footnote {
+        font-size: 0.8rem;
+        color: #888;
+        font-family: system-ui, sans-serif;
+    }
+</style>
+<body>
+
+    <header>
+        <h1 style="font-size: 70px;"><img src="extras/silscreenbetter.PNG" alt="Silkscreen Logo" width="70" height="70"> The SilkScreen Studios Website</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a> | 
+        <a href="about.html">About</a>
+    </nav>
+
+    <main>
+        <section>
+            <h2>Our Content</h2>
+            <p>
+                <a href="extras/i_got_put_into_a_fishfillet.JPG" download>Download my first invention (17/6/26)</a>
+            </p>
+            <p>
+                <a href="random_image.html">The Random Image Finder (7/8/26)</a>
+            </p>
+            <p>
+                <a href="rps.html">Rock Paper Scissors ONLINE (8/8/26)</a>
+            </p>
+            <p>
+                <a href="better.html">The Polling Website (certain people only) (24/8/26)</a>
+            </p>
+            <p>
+                <a href="icegame.html">Ice Drift Game (4/9/26)</a>
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p id="page-views" class="footnote">Loading page views...</p>
+        <p class="footnote">Note: If you use an adblocker, the view counter feature may be blocked from displaying.</p>
+    </footer>
+
+    <script>
+        const pageViewsEl = document.getElementById('page-views');
+
+        async function updateHomePageViews() {
+            try {
+                // Abacus API registers hits instantly without buffering
+                const res = await fetch('https://abacus.jasoncameron.dev/hit/silkscreen-studios.github.io/home');
+                
+                if (!res.ok) throw new Error('Counter unreachable');
+                
+                const data = await res.json();
+                pageViewsEl.innerText = `This page has been visited ${data.value} times.`;
+            } catch (err) {
+                pageViewsEl.innerText = "you crashed it mate (only for yourself). nice one";
+            }
+        }
+
+        updateHomePageViews();
+    </script>
+
+</body>
+</html>
