@@ -1,69 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>silks2</title>
-</head>
-<link href='https://fonts.googleapis.com/css?family=Fredoka One' rel='stylesheet'>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Silks2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-    a:link {
-            color: deepskyblue;
-            background-color: transparent;
-            text-decoration: none;
-    }
-    a:visited {
-            color: blueviolet;
-            background-color: transparent;
-            text-decoration: none;
-    }
-    a:hover {
-            color: lightskyblue;
-            background-color: transparent;
-            text-decoration: underline;
-    }
-    a:active {
-            color: steelblue;
-            background-color: transparent;
-            text-decoration: underline;
-    }
-    body {
-        font-family: 'Fredoka One';
-        font-size: 22px;
-        background-color: #363636;
-        color: white;
-    }
-    .footnote {
-        font-size: 0.8rem;
-        color: #888;
-        font-family: system-ui, sans-serif;
-    }
+  :root {
+    --orange: #ff7a1a;
+    --orange-dark: #d85f00;
+    --orange-soft: #fff1e5;
+    --white: #ffffff;
+    --text: #3a2a1e;
+  }
+
+  body {
+    margin: 0;
+    padding: 40px 20px;
+    background: var(--white);
+    color: var(--text);
+    font-family: "Fredoka One", "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+  }
+
+  .games {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+  }
+
+  /* ---- The game card (the whole thing is one link) ---- */
+  .game-card {
+    display: block;
+    width: 320px;
+    max-width: 100%;
+    text-decoration: none;
+    color: inherit;
+    background: var(--white);
+    border: 2px solid var(--orange-soft);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .game-card:hover,
+  .game-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: var(--orange);
+    box-shadow: 0 6px 0 var(--orange);
+    outline: none;
+  }
+
+  /* ---- Scrolling images ---- */
+  .slides {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--orange-soft);
+  }
+  .track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.6s ease;
+  }
+  .track img {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .dots {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+  .dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--white);
+    opacity: 0.6;
+  }
+  .dots span.active {
+    background: var(--orange);
+    opacity: 1;
+    box-shadow: 0 0 0 2px var(--white);
+  }
+
+  /* ---- Title ---- */
+  .title {
+    padding: 16px;
+    background: var(--white);
+    color: var(--orange);
+    font-family: "Fredoka One", "Trebuchet MS", Arial, sans-serif;
+    font-size: 1.4rem;
+    font-weight: normal;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track, .game-card { transition: none; }
+  }
 </style>
+</head>
 <body>
 
-    <header>
-    </header>
+<div class="games">
 
-    <nav>
-    </nav>
+  <!-- ===== One game card. Copy this whole <a> block for each game. ===== -->
+  <a class="game-card" href="icegame.html">
+    <div class="slides">
+      <div class="track">
+        <!-- Replace each src with your own screenshot, e.g. images/game1-a.png -->
+        <img alt="Game 1 screenshot 1" src="data:image/svg+xml,%3Csvg xmlns='extras/img1' viewBox='0 0 160 100'%3E%3Crect width='160' height='100' fill='%23ffb066'/%3E%3Ctext x='80' y='55' font-size='12' text-anchor='middle' fill='white' font-family='Arial'%3EScreenshot 1%3C/text%3E%3C/svg%3E">
+        <img alt="Game 1 screenshot 2" src="data:image/svg+xml,%3Csvg xmlns='extras/img2' viewBox='0 0 160 100'%3E%3Crect width='160' height='100' fill='%23ff9a3d'/%3E%3Ctext x='80' y='55' font-size='12' text-anchor='middle' fill='white' font-family='Arial'%3EScreenshot 2%3C/text%3E%3C/svg%3E">
+      </div>
+      <div class="dots"></div>
+    </div>
+    <div class="title">Ice Drift</div>
+  </a>
 
-    <main>
-        <section>
-            <h2>my content innit</h2>
-            <a href="icegame.html">
-                Ice Drift Game (from my main site)
-            </a>
-            <p> </p>
-            <a href="bbgame.html">
-                Weststone Secondary Basketball
-            </a>
-        </section>
-    </main>
+  <a class="game-card" href="bbgame.html">
+    <div class="slides">
+      <div class="track">
+        <img alt="Game 2 screenshot 1" src="data:image/svg+xml,%3Csvg xmlns='extras/img4' viewBox='0 0 160 100'%3E%3Crect width='160' height='100' fill='%23ffc48a'/%3E%3Ctext x='80' y='55' font-size='12' text-anchor='middle' fill='white' font-family='Arial'%3EScreenshot 1%3C/text%3E%3C/svg%3E">
+        <img alt="Game 2 screenshot 2" src="data:image/svg+xml,%3Csvg xmlns='extras/img5' viewBox='0 0 160 100'%3E%3Crect width='160' height='100' fill='%23ff8c2e'/%3E%3Ctext x='80' y='55' font-size='12' text-anchor='middle' fill='white' font-family='Arial'%3EScreenshot 2%3C/text%3E%3C/svg%3E">
+        <img alt="Game 2 screenshot 3" src="data:image/svg+xml,%3Csvg xmlns='extras/img3' viewBox='0 0 160 100'%3E%3Crect width='160' height='100' fill='%23ff7a1a'/%3E%3Ctext x='80' y='55' font-size='12' text-anchor='middle' fill='white' font-family='Arial'%3EScreenshot 3%3C/text%3E%3C/svg%3E">
+      </div>
+      <div class="dots"></div>
+    </div>
+    <div class="title">Weststone Basketball Manager</div>
+  </a>
 
-    <footer>
-        <p></p>
-        <p></p>       
-        site by SilkScreen Studios (silkscreen-studios.github.io)
-    </footer>
+</div>
+
+<script>
+  // Every card scrolls to its next image every 8 seconds.
+  const SECONDS_PER_SLIDE = 8;
+
+  document.querySelectorAll(".game-card").forEach(function (card) {
+    const track = card.querySelector(".track");
+    const count = track.children.length;
+    const dotsBox = card.querySelector(".dots");
+    let current = 0;
+
+    // Build one dot per image (hidden if there's only one image)
+    for (let i = 0; i < count; i++) dotsBox.appendChild(document.createElement("span"));
+    const dots = dotsBox.children;
+    if (count < 2) return;
+
+    function show(n) {
+      current = n % count;
+      track.style.transform = "translateX(-" + current * 100 + "%)";
+      for (let i = 0; i < count; i++) dots[i].classList.toggle("active", i === current);
+    }
+
+    show(0);
+    setInterval(function () { show(current + 1); }, SECONDS_PER_SLIDE * 1000);
+  });
+</script>
+
 </body>
 </html>
