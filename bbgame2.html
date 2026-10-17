@@ -54,7 +54,7 @@ const W={PG:[.2,.1,.3,.05,.15,.2],SG:[.3,.15,.15,.05,.15,.2],SF:[.2,.2,.1,.1,.2,
 const BIAS={PG:[3,-4,8,-8,0,2],SG:[8,0,0,-6,-2,2],SF:[2,2,0,0,2,3],PF:[-4,6,-4,6,3,0],C:[-8,8,-6,10,4,-2]};
 const STY={'Sharpshooters':{sho:7,ins:-4},'Bruisers':{ins:6,reb:6,sho:-5},'Lockdown D':{def:8,pla:-3},'Run & Gun':{ath:7,pla:3,def:-5},'Balanced':{}};
 const NAMES=['Eastwood United','Wilson Wanderers','Northgate DT','Eastfield Cats','Mathsblock Meddlers','The Otimpings','English Pearls','Mrs Ballers','Piercy Playmakers','Capital Royals','Metro Giants','Citadel Knights','Ironbridge Falcons','Summit Stags','Royal Oak Rams','Marlowe Panthers','Stonegate Bulls','Kingsway Jets','Beacon Phoenix'];
-let ME=''Weststone Academy',ren=false;const NMD=18;
+let ME='Weststone Academy',ren=false;const NMD=18;
 let G,uid=1;
 const ovr=(p,s=p.s)=>Math.round(ST.reduce((a,k,i)=>a+s[k]*W[p.pos][i],0));
 function pickName(list,key){const u=(G.nu=G.nu||{}),w=list.map(n=>1/Math.pow(3,u[key+n]||0));let r=Math.random()*w.reduce((a,b)=>a+b,0),i=0;for(;i<list.length-1&&(r-=w[i])>0;i++);u[key+list[i]]=(u[key+list[i]]||0)+1;return list[i]}
