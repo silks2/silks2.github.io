@@ -49,8 +49,8 @@ tr.me td{font-weight:700;background:color-mix(in srgb,var(--ac) 12%,transparent)
 .lu{display:flex;gap:8px;justify-content:space-between;margin:6px 0 8px}.lu>div{text-align:center}.ov2{width:38px;height:38px;border-radius:50%;background:var(--bar);display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 2px;border:2px solid var(--ac)}
 </style></head><body><div class="w" id="app"></div>
 <script>
-const FN=["Travis","Michael","Harry","Harry","Harry","Aadhav","Tyler","Felix","Shubminder","Hugh","Freddy","Freddie","Tyler","Dexter","Finley","Michael","Billy","Harry","Jack","Aryan","Rafe","Ryder","Yaqoob","Alfie","Alfie","Kayden","Evan","Rudy","George","Bill","Riley","Aadhesh"];
-const LN=["Parkins","Culloty","Cunningham","Baker","Little","Rajkumar","Dawson","Mars","Rathod","Brown","Grover","Clements","Cockbill","Walton","MacAlonan","Simeon","Williams","Munson","Litte","Allom","Dowling","Venman","Ibn-Anwar","Wolfe","Pithman","Mansell","Dolman","Perry-Kite","Beverley","Goldsmith","White","Ilyraja"];
+const FN=["Travis","Michael","Harry","Harry","Harry","Aadhav","Tyler","Felix","Shubminder","Hugh","Freddy","Freddie","Tyler","Dexter","Finley","Michael","Billy","Harry","Jack","Aryan","Rafe","Ryder","Yaqoob","Alfie","Alfie","Kayden","Evan","Rudy","George","Bill","Riley","Aadhesh","Isaac"];
+const LN=["Parkins","Culloty","Cunningham","Baker","Little","Rajkumar","Dawson","Mars","Rathod","Brown","Grover","Clements","Cockbill","Walton","MacAlonan","Simeon","Williams","Munson","Litte","Allom","Dowling","Venman","Ibn-Anwar","Wolfe","Pithman","Mansell","Dolman","Perry-Kite","Beverley","Goldsmith","White","Ilyraja","Gordon"];
 const R=(a,b)=>a+Math.random()*(b-a),RI=(a,b)=>Math.floor(R(a,b+1)),pick=a=>a[RI(0,a.length-1)],clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
 const gauss=()=>{let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(6.2832*v)};
 const ST=['sho','ins','pla','reb','def','ath'],LBL={sho:'Shooting',ins:'Inside',pla:'Playmaking',reb:'Rebounding',def:'Defense',ath:'Athleticism'};
