@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Academy Hoops</title>
+<title>Weststone BB</title>
 <style>
 :root{--bg:#f4f5f7;--card:#fff;--tx:#1b1f27;--mu:#667085;--ac:#e8590c;--bd:#d9dde3;--ok:#2f9e44;--no:#e03131;--bar:#e9ecef;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151b;--card:#1b2029;--tx:#e8eaee;--mu:#8e97a6;--bd:#2c3340;--bar:#2a313c;color-scheme:dark}}
@@ -58,8 +58,8 @@ const POS=['PG','SG','SF','PF','C'];
 const W={PG:[.2,.1,.3,.05,.15,.2],SG:[.3,.15,.15,.05,.15,.2],SF:[.2,.2,.1,.1,.2,.2],PF:[.1,.25,.05,.25,.2,.15],C:[.05,.25,.05,.3,.25,.1]};
 const BIAS={PG:[3,-4,8,-8,0,2],SG:[8,0,0,-6,-2,2],SF:[2,2,0,0,2,3],PF:[-4,6,-4,6,3,0],C:[-8,8,-6,10,4,-2]};
 const STY={'Sharpshooters':{sho:7,ins:-4},'Bruisers':{ins:6,reb:6,sho:-5},'Lockdown D':{def:8,pla:-3},'Run & Gun':{ath:7,pla:3,def:-5},'Balanced':{}};
-const NAMES=['Harbour Kings','Riverside Rockets','Northgate Wolves','Eastfield Hawks','Valley Titans','Lakeside Lions','Hillcrest Eagles','Dockyard Dragons','Westbridge Bears','Capital Royals','Metro Giants','Citadel Knights','Ironbridge Falcons','Summit Stags','Royal Oak Rams','Marlowe Panthers','Stonegate Bulls','Kingsway Jets','Beacon Phoenix'];
-let ME='Homegrown Hoops',ren=false;const NMD=18;
+const NAMES=['Eastwood United','Wilson Wanderers','Northgate DT','Eastfield Cats','Mathsblock Meddlers','The Otimpings','English Pearls','Mrs Ballers','Piercy Playmakers','Capital Royals','Metro Giants','Citadel Knights','Ironbridge Falcons','Summit Stags','Royal Oak Rams','Marlowe Panthers','Stonegate Bulls','Kingsway Jets','Beacon Phoenix'];
+let ME='Weststone Academy',ren=false;const NMD=18;
 let G,uid=1;
 const ovr=(p,s=p.s)=>Math.round(ST.reduce((a,k,i)=>a+s[k]*W[p.pos][i],0));
 function pickName(list,key){const u=(G.nu=G.nu||{}),w=list.map(n=>1/Math.pow(3,u[key+n]||0));let r=Math.random()*w.reduce((a,b)=>a+b,0),i=0;for(;i<list.length-1&&(r-=w[i])>0;i++);u[key+list[i]]=(u[key+list[i]]||0)+1;return list[i]}
@@ -569,7 +569,7 @@ function acard(p,ex){const d=sp(p),o=rng(ovr(p),p.np,d*.8),pt=rng(ovr(p,p.c),p.n
  <div class=mu style="font-size:11px;margin-top:4px">Orange = current range, green = future peak range. Scouting accuracy ±${d.toFixed(1)} · Est. value ${money(estVal(p))}</div>
  ${ex||`<div class=acts><button class=p onclick="promote(${p.id})">Promote</button><button onclick="rel(${p.id},'academy')">Release</button></div>`}</div>`}
 function render(){ensureXI();const A=document.getElementById('app'),over=G.md>=NMD,fx=!over&&G.sched[G.md].find(f=>f.includes(ME)),opp=fx&&(fx[0]==ME?fx[1]:fx[0]);
- let h=`<div class=top><div><h1>🏀 Academy Hoops</h1><span class=mu>${ME} · ${G.lg?'Division Two':'Premier Division'} · ${sl()} · 📅 ${dateStr()} · Matchday ${Math.min(G.md+1,NMD)}/${NMD} · Team OVR ${tOvr(ME)} · 💰 ${money(G.cash)}</span> ${ren?`<div style="margin-top:6px"><input id=tn value="${ME}" maxlength=24 style="font:inherit;padding:5px 8px;border-radius:7px;border:1px solid var(--bd);background:var(--card);color:var(--tx)" onkeydown="if(event.key=='Enter')doRen()"> <button class=p onclick="doRen()">Save</button></div>`:`<button style="padding:2px 8px;font-size:12px" onclick="ren=true;render()">Rename team</button>`}</div><div>
+ let h=`<div class=top><div><h1>🏀 Weststone Basketball [BETA]</h1><span class=mu>${ME} · ${G.lg?'Division Two':'Premier Division'} · ${sl()} · 📅 ${dateStr()} · Matchday ${Math.min(G.md+1,NMD)}/${NMD} · Team OVR ${tOvr(ME)} · 💰 ${money(G.cash)}</span> ${ren?`<div style="margin-top:6px"><input id=tn value="${ME}" maxlength=24 style="font:inherit;padding:5px 8px;border-radius:7px;border:1px solid var(--bd);background:var(--card);color:var(--tx)" onkeydown="if(event.key=='Enter')doRen()"> <button class=p onclick="doRen()">Save</button></div>`:`<button style="padding:2px 8px;font-size:12px" onclick="ren=true;render()">Rename team</button>`}</div><div>
  ${over?`<button class=p onclick="rollover()">Start Season ${G.season+1}</button>`:`<button class=p onclick="simNext()">${nextLabel()}</button>`}
  <button onclick="if(confirm('Start a brand new game?')){newGame();render()}">New game</button></div></div>`;
  if(G.msg)h+=`<div class=msg>${G.msg}</div>`;
