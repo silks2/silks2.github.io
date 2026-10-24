@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Realm Table – D&amp;D Campaign Maker</title>
+<title>D&amp;D Campaign Maker</title>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
 :root{--bg:#f4eee0;--pn:#fffaf0;--ink:#2b2118;--ac:#8b2e1f;--ln:#d9ccb4;--ac2:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -87,7 +87,7 @@ input[type=text],input[type=password]{background:var(--pn);border:1px solid var(
 </style></head><body>
 <button id="tm" title="Toggle dark / light mode" aria-label="Toggle dark or light mode"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
 <div id="home">
-  <h1>🎲 Realm Table</h1>
+  <h1>🎲 Thing Innit</h1>
   <p>A simple online D&amp;D campaign maker</p>
   <div class="card">
     <input type="text" id="nm" maxlength="20" placeholder="Choose a username" autocomplete="off">
@@ -235,7 +235,7 @@ $("#fg").onclick=()=>{try{localStorage.removeItem("dnd_k");localStorage.removeIt
 try{const o=JSON.parse(localStorage.getItem("dnd_k")||"null");if(o){$("#fg").style.display="";say("Signed in on this device as “"+(o.d||o.n)+"”.")}
   const l=JSON.parse(localStorage.getItem("dnd_last")||"null");if(l&&l.code){$("#rj").style.display="";$("#rj").textContent="Rejoin lobby "+l.code}}catch(e){}
 function enter(){inApp=true;$("#home").style.display="none";$("#app").style.display="flex";
-  $("#top").innerHTML=`<b>🎲 Realm Table</b><span>${host?"Host":"Guest"}: ${esc(me)}${!host&&signed?" 🔒":""}</span><span>Lobby code <span class="code">${esc(code)}</span></span><span id="cnt"></span>${host?"<span style='opacity:.7;font-size:.85em'>Keep this tab open while you play</span>":""}`;
+  $("#top").innerHTML=`<b>🎲 Thing Innit</b><span>${host?"Host":"Guest"}: ${esc(me)}${!host&&signed?" 🔒":""}</span><span>Lobby code <span class="code">${esc(code)}</span></span><span id="cnt"></span>${host?"<span style='opacity:.7;font-size:.85em'>Keep this tab open while you play</span>":""}`;
   if(host){$("#main").innerHTML=`<aside id="side"><h3>Scenes</h3><div id="sl" style="display:grid;gap:6px"></div><button id="ns">+ New scene</button>
   <h3>Players</h3><div id="pl" style="display:grid;gap:4px"></div>
   <h3>This scene</h3><input type="text" id="sn" maxlength="30"><button id="sh" class="pr">Show to players</button>
