@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Realm Table – D&amp;D Campaign Maker</title>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+:root{--bg:#f4eee0;--pn:#fffaf0;--ink:#2b2118;--ac:#8b2e1f;--ln:#d9ccb4;--ac2:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1612;--pn:#252019;--ink:#f1e6d2;--ac:#e0705a;--ln:#463b2e;--ac2:#1a1612;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1612;--pn:#252019;--ink:#f1e6d2;--ac:#e0705a;--ln:#463b2e;--ac2:#1a1612;color-scheme:dark}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.4 Georgia,"Times New Roman",serif;display:flex;flex-direction:column;overflow:hidden}
+button,input,.fb{font:inherit;color:var(--ink)}
+button,.fb{background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:7px 12px;cursor:pointer;display:inline-block}
+button:hover,.fb:hover{border-color:var(--ac)}
+button.pr{background:var(--ac);color:var(--ac2);border-color:var(--ac);font-weight:bold}
+input[type=text]{background:var(--pn);border:1px solid var(--ln);border-radius:8px;padding:8px 10px;width:100%;box-sizing:border-box}
+#home{margin:auto;max-width:380px;width:calc(100% - 32px);text-align:center;overflow:auto;max-height:100%}
+#home h1{font-size:2.4em;margin:.2em 0;color:var(--ac);letter-spacing:.02em}
+#home .card{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:18px;margin:14px 0;display:grid;gap:10px}
+#home p{margin:0;opacity:.8}
+#st{color:var(--ac);min-height:1.4em;text-align:center;font-size:.9em}
+#app{display:none;flex:1;min-height:0;flex-direction:column}
+#top{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--ln);background:var(--pn);flex-wrap:wrap}
+#top b{color:var(--ac)} .code{font-family:monospace;font-size:1.3em;letter-spacing:.18em;background:var(--bg);border:1px dashed var(--ac);border-radius:8px;padding:2px 10px}
+#main{flex:1;min-height:0;display:flex}
+#side{width:250px;flex:none;overflow:auto;padding:10px;border-right:1px solid var(--ln);background:var(--pn);display:flex;flex-direction:column;gap:8px}
+#side h3{margin:6px 0 0;font-size:1em;color:var(--ac)}
+#side button,#side .fb{width:100%;box-sizing:border-box;text-align:left}
+.sc.on{border-color:var(--ac);background:var(--bg)} .lv{color:var(--ac);float:right}
+#lib{display:flex;flex-wrap:wrap;gap:6px} #lib img{width:52px;height:52px;object-fit:contain;border:1px solid var(--ln);border-radius:6px;background:var(--bg);cursor:grab}
+#tools{display:none;gap:4px;flex-wrap:wrap} #tools button{width:auto!important;padding:5px 9px}
+.hint{font-size:.8em;opacity:.7;margin:0}
+#view{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;background:#0006;position:relative;overflow:hidden}
+#stage{position:relative;overflow:hidden;background:linear-gradient(135deg,#3a3329,#6b5b45);box-shadow:0 4px 24px #0008;flex:none}
+.it{position:absolute;transform-origin:center;user-select:none;-webkit-user-drag:none;touch-action:none;pointer-events:none}
+.host .it{pointer-events:auto;cursor:grab} .it.sel{outline:2px dashed #ffd24a;outline-offset:2px}
+.msg{color:#fff;opacity:.8;padding:20px;text-align:center}
+#bar{border-top:1px solid var(--ln);background:var(--pn);padding:6px 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-height:28px}
+#dice{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+#bar.hide #dice{display:none}
+#dice button{min-width:48px;font-weight:bold}
+#res{font-size:1.2em;min-width:110px;text-align:center}#res.pop{animation:pop .4s}
+@keyframes pop{from{transform:scale(1.6);color:var(--ac)}to{transform:none}}
+.chip{background:var(--bg);border:1px solid var(--ln);border-radius:999px;padding:2px 10px;white-space:nowrap}
+@media (max-width:700px){#main{flex-direction:column}#side{width:auto;max-height:38vh;border-right:0;border-bottom:1px solid var(--ln)}}
+</style></head><body>
+<div id="home">
+  <h1>🎲 Realm Table</h1>
+  <p>A simple online D&amp;D campaign maker</p>
+  <div class="card">
+    <input type="text" id="nm" maxlength="20" placeholder="Choose a username" autocomplete="off">
+    <button class="pr" id="cr">Create campaign</button>
+    <button id="rs" style="display:none">Resume my last campaign</button>
+    <label class="fb">Import campaign file<input type="file" accept=".json,application/json" id="im" hidden></label>
+  </div>
+  <div class="card">
+    <input type="text" id="cd" maxlength="5" placeholder="Lobby code" autocomplete="off" style="text-transform:uppercase;text-align:center;letter-spacing:.2em">
+    <button id="jn">Join lobby</button>
+  </div>
+  <div id="st">Ready.</div>
+</div>
+<div id="app">
+  <div id="top"></div>
+  <div id="main"></div>
+  <div id="bar"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9),AL="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",PREF="realmtable-dnd-";
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v));
+let peer=null,conn=null,conns=[],players={},me="",code="",host=false,camp={live:null,scenes:[],sizes:{},last:.15},imgs={},asp={},edit=null,sel=null,drag=null,SW=1,SH=1;
+const say=t=>$("#st").textContent=t,say2=t=>{const c=$("#cnt");if(c){c.textContent=t;setTimeout(()=>{c.textContent=""},4000)}};
+const kv=(m,k,v)=>new Promise((ok,no)=>{const r=indexedDB.open("realmtable",1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");
+  r.onsuccess=()=>{const s=r.result.transaction("kv",m=="g"?"readonly":"readwrite").objectStore("kv"),q=m=="g"?s.get(k):s.put(v,k);q.onsuccess=()=>ok(q.result);q.onerror=()=>no()};r.onerror=()=>no()});
+try{$("#nm").value=localStorage.getItem("dnd_name")||""}catch(e){}
+kv("g","host").then(h=>{if(h)$("#rs").style.display=""}).catch(()=>{});
+function nameOk(){me=$("#nm").value.trim().slice(0,20);if(!me){say("Pick a username first.");return false}
+  if(typeof Peer=="undefined"){say("Could not load the connection library – check your internet connection.");return false}
+  try{localStorage.setItem("dnd_name",me)}catch(e){}return true}
+function shrink(f,max,type,lim){return new Promise((ok,no)=>{const u=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{let m=max,q=.78,out;for(let i=0;i<9;i++){const k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");
+    c.width=Math.max(1,im.width*k|0);c.height=Math.max(1,im.height*k|0);c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+    out=c.toDataURL(type,q);if(out.length<lim)break;m*=.8;q=Math.max(.4,q-.06)}
+    URL.revokeObjectURL(u);out.length<lim*1.3?ok(out):no(new Error("big"))};im.onerror=no;im.src=u})}
+function measure(id){if(asp[id]!==undefined||!imgs[id])return;const i=new Image();asp[id]=0;i.onload=()=>{asp[id]=i.width/i.height;draw()};i.src=imgs[id].data}
+const mkcode=()=>Array.from({length:5},()=>AL[Math.random()*AL.length|0]).join("");
+const openPeer=id=>new Promise((ok,no)=>{const p=id?new Peer(PREF+id.toLowerCase()):new Peer();p.on("open",()=>ok(p));p.on("error",no)});
+async function startHost(c){say("Opening lobby…");try{for(let t=0;t<8&&!peer;t++){try{peer=await openPeer(c)}catch(e){if(e.type=="unavailable-id")c=mkcode();else throw e}}
+    if(!peer)throw 0;code=c;host=true;peer.on("connection",onConn);peer.on("disconnected",()=>{try{peer.reconnect()}catch(e){}});peer.on("error",e=>say2("Network issue: "+e.type));
+    persist();enter()}catch(e){peer=null;say("Could not open a lobby. Check your connection and try again.")}}
+$("#cr").onclick=()=>{if(!nameOk())return;const s={id:uid(),name:"Scene 1",bg:null,items:[]};camp={live:s.id,scenes:[s],sizes:{},last:.15};imgs={};edit=s.id;startHost(mkcode())};
+function exportCamp(){const b=new Blob([JSON.stringify({app:"realmtable",v:1,code,camp,imgs})],{type:"application/json"}),a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download="campaign-"+code+".realm.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
+function parseBundle(txt){const o=JSON.parse(txt);if(!o||o.app!="realmtable"||!o.camp||!Array.isArray(o.camp.scenes)||!o.camp.scenes.length)throw 0;
+  const im={};for(const[k,v]of Object.entries(o.imgs||{}))if(v&&typeof v.data=="string"&&/^data:image\//.test(v.data))im[k]={data:v.data,kind:v.kind=="bg"?"bg":"item"};
+  const c=o.camp;c.scenes.forEach(s=>{s.items=Array.isArray(s.items)?s.items:[]});c.sizes=c.sizes||{};c.last=c.last||.15;if(!c.scenes.some(s=>s.id===c.live))c.live=c.scenes[0].id;
+  return{code:String(o.code||"").slice(0,5),camp:c,imgs:im}}
+async function readBundle(e){const f=e.target.files[0];e.target.value="";if(!f)return null;try{return parseBundle(await f.text())}catch(x){return false}}
+$("#im").onchange=async e=>{const o=await readBundle(e);if(o===null)return;if(o===false){say("That file is not a valid campaign.");return}
+  if(!nameOk())return;camp=o.camp;imgs=o.imgs;asp={};Object.keys(imgs).forEach(measure);edit=camp.live;startHost(o.code||mkcode())};
+$("#rs").onclick=async()=>{if(!nameOk())return;try{const h=await kv("g","host");camp=h.camp;imgs=h.imgs||{};edit=camp.live||camp.scenes[0].id;Object.keys(imgs).forEach(measure);startHost(h.code)}catch(e){say("Nothing to resume.")}};
+function onConn(c){c.sent=new Set();conns.push(c);c.on("data",m=>{if(!m||typeof m!="object")return;
+    if(m.t=="hi"){players[c.peer]={n:String(m.n||"Player").slice(0,20)};pushTo(c)}
+    else if(m.t=="roll"&&players[c.peer]){players[c.peer].d=String(m.d).slice(0,5);players[c.peer].v=+m.v||0}rolls()});
+  c.on("close",()=>{delete players[c.peer];conns=conns.filter(x=>x!==c);rolls()});c.on("error",()=>{})}
+function pushTo(c){if(!c.open)return;const s=camp.scenes.find(x=>x.id===camp.live),ids=s?[s.bg,...s.items.map(i=>i.img)].filter(Boolean):[];
+  for(const id of new Set(ids))if(imgs[id]&&!c.sent.has(id)){c.sent.add(id);c.send({t:"img",id,v:imgs[id]})}c.send({t:"scene",s:s||null})}
+let lt=0,t1=0,t2=0;
+function save(){const n=Date.now();clearTimeout(t1);if(n-lt>70){lt=n;conns.forEach(pushTo)}else t1=setTimeout(()=>{lt=Date.now();conns.forEach(pushTo)},80);clearTimeout(t2);t2=setTimeout(persist,700)}
+function persist(){kv("s","host",{code,camp,imgs}).catch(()=>{})}
+$("#jn").onclick=()=>{if(!nameOk())return;code=$("#cd").value.trim().toUpperCase();if(code.length<3){say("Enter the lobby code.");return}say("Connecting…");host=false;
+  const to=setTimeout(()=>say("Taking a while… check the code and that the host is online."),12000);
+  openPeer().then(p=>{peer=p;peer.on("error",e=>{clearTimeout(to);say(e.type=="peer-unavailable"?"No lobby with that code (is the host online?).":"Connection problem: "+e.type)});
+    conn=peer.connect(PREF+code.toLowerCase(),{reliable:true});
+    conn.on("open",()=>{clearTimeout(to);conn.send({t:"hi",n:me});enter()});
+    conn.on("data",m=>{if(!m)return;if(m.t=="img"&&m.v&&m.v.data){imgs[m.id]=m.v;measure(m.id);draw()}else if(m.t=="scene"){camp.scenes=m.s?[m.s]:[];camp.live=m.s?m.s.id:null;draw()}});
+    conn.on("close",()=>{const r=$("#res");if(r)r.textContent="Host disconnected";else say("Host disconnected.")})}).catch(()=>say("Could not reach the connection server."))};
+function enter(){$("#home").style.display="none";$("#app").style.display="flex";
+  $("#top").innerHTML=`<b>🎲 Realm Table</b><span>${host?"Host":"Guest"}: ${esc(me)}</span><span>Lobby code <span class="code">${esc(code)}</span></span><span id="cnt"></span>${host?"<span style='opacity:.7;font-size:.85em'>Keep this tab open while you play</span>":""}`;
+  if(host){$("#main").innerHTML=`<aside id="side"><h3>Scenes</h3><div id="sl" style="display:grid;gap:6px"></div><button id="ns">+ New scene</button>
+  <h3>This scene</h3><input type="text" id="sn" maxlength="30"><button id="sh" class="pr">Show to players</button>
+  <label class="fb">Set background image<input type="file" accept="image/*" id="fbg" hidden></label><button id="ds">Delete scene</button>
+  <h3>Item images</h3><label class="fb">+ Import item images<input type="file" accept="image/*" multiple id="fit" hidden></label><div id="lib"></div>
+  <div id="tools"><button data-a="-">− Smaller</button><button data-a="+">+ Bigger</button><button data-a="l">⟲</button><button data-a="r">⟳</button><button data-a="x">🗑 Remove</button></div>
+  <h3>Campaign file</h3><button id="ex">⬇ Export campaign</button><label class="fb">⬆ Import campaign<input type="file" accept=".json,application/json" id="imp" hidden></label>
+  <p class="hint">Drag an item onto the scene (or click it). Scroll over an item to resize it; hold left click on an item and scroll to rotate it. Size is remembered per image.</p></aside><div id="view" class="host"></div>`;
+    hostUi();lib();$("#bar").innerHTML=`<b>Player rolls:</b><span id="rl">waiting for players…</span>`}
+  else{$("#main").innerHTML=`<div id="view"></div>`;
+    $("#bar").innerHTML=`<button id="tg">▾ Dice</button><div id="dice">${[4,6,8,10,12,20,100].map(n=>`<button data-d="${n}">d${n}</button>`).join("")}</div><span id="res">Roll a die!</span>`;
+    $("#tg").onclick=()=>{const b=$("#bar");b.classList.toggle("hide");$("#tg").textContent=b.classList.contains("hide")?"▴ Dice":"▾ Dice"};
+    $("#dice").onclick=e=>{const n=+e.target.dataset.d;if(!n)return;const v=1+Math.floor(Math.random()*n),r=$("#res");
+      r.textContent=`d${n} → ${v}`;r.classList.remove("pop");void r.offsetWidth;r.classList.add("pop");if(conn&&conn.open)conn.send({t:"roll",d:"d"+n,v})}}
+  const v=$("#view");v.addEventListener("pointerdown",pd);v.addEventListener("pointermove",pm);v.addEventListener("pointerup",pu);v.addEventListener("wheel",wh,{passive:false});
+  if(host){v.ondragover=e=>e.preventDefault();v.ondrop=e=>{e.preventDefault();const id=e.dataTransfer.getData("text/plain"),st=$("#stage");if(!st||!imgs[id])return;
+    const r=st.getBoundingClientRect();add(id,(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)}}
+  addEventListener("resize",draw);addEventListener("keydown",e=>{if(host&&sel&&e.key=="Delete"&&e.target.tagName!="INPUT")act("x")});draw()}
+const scn=()=>camp.scenes.find(s=>s.id===(host?edit:camp.live)),item=id=>{const s=scn();return s&&s.items.find(i=>i.id===id)};
+function place(d,it){d.style.height=it.h*SH+"px";d.style.left=it.x*SW+"px";d.style.top=it.y*SH+"px";d.style.transform=`translate(-50%,-50%) rotate(${it.r}deg)`}
+function draw(){const box=$("#view");if(!box)return;box.innerHTML="";const s=scn();
+  if(!s){box.innerHTML=`<p class="msg">${host?"Create a scene to begin.":"Waiting for the host to show a scene…"}</p>`;return}
+  const bg=s.bg&&imgs[s.bg],a=(s.bg&&asp[s.bg])||16/9,cw=box.clientWidth,ch=box.clientHeight;let W=cw,H=W/a;if(H>ch){H=ch;W=H*a}
+  SW=W;SH=H;const st=document.createElement("div");st.id="stage";st.style.width=W+"px";st.style.height=H+"px";
+  if(bg)st.style.background=`url("${bg.data}") center/100% 100%`;
+  for(const it of s.items){const i=imgs[it.img];if(!i)continue;const d=document.createElement("img");d.className="it"+(it.id===sel?" sel":"");d.dataset.id=it.id;d.src=i.data;d.draggable=false;place(d,it);st.appendChild(d)}
+  box.appendChild(st);if(host)hostUi(true)}
+function hostUi(light){if(!light){
+  $("#ns").onclick=()=>{const s={id:uid(),name:"Scene "+(camp.scenes.length+1),bg:null,items:[]};camp.scenes.push(s);edit=s.id;sel=null;save();hostUi();draw()};
+  $("#sn").oninput=e=>{scn().name=e.target.value;save();sceneList()};
+  $("#sh").onclick=()=>{camp.live=edit;save();sceneList();hostUi(true)};
+  $("#ds").onclick=()=>{if(camp.scenes.length<2)return;camp.scenes=camp.scenes.filter(s=>s.id!==edit);edit=camp.scenes[0].id;if(!camp.scenes.some(s=>s.id===camp.live))camp.live=edit;sel=null;save();hostUi();draw()};
+  $("#fbg").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const id=await store(f,"bg");scn().bg=id;save();draw()}catch(x){say2("Image unreadable.")}};
+  $("#fit").onchange=async e=>{const fs=[...e.target.files];e.target.value="";for(const f of fs){try{await store(f,"item")}catch(x){say2("An image was unreadable.")}}lib()};
+  $("#tools").onclick=e=>{const a=e.target.dataset.a;if(a)act(a)};
+  $("#ex").onclick=exportCamp;
+  $("#imp").onchange=async e=>{const o=await readBundle(e);if(o===null)return;if(o===false){say2("That file is not a valid campaign.");return}
+    if(!confirm("Replace the current campaign with this file?"))return;camp=o.camp;imgs=o.imgs;asp={};Object.keys(imgs).forEach(measure);edit=camp.live;sel=null;
+    conns.forEach(c=>{c.sent=new Set()});save();persist();hostUi();lib();draw()};
+  $("#sn").value=scn().name;sceneList()}
+  $("#tools").style.display=sel?"flex":"none";const dl=$("#sh");if(dl)dl.disabled=camp.live===edit}
+async function store(f,kind){const data=await shrink(f,kind=="bg"?1600:400,kind=="bg"?"image/jpeg":"image/webp",kind=="bg"?420000:160000),id=uid();
+  imgs[id]={data,kind};measure(id);persist();return id}
+function sceneList(){$("#sl").innerHTML="";camp.scenes.forEach(s=>{const b=document.createElement("button");b.className="sc"+(s.id===edit?" on":"");
+  b.innerHTML=esc(s.name||"Untitled")+(s.id===camp.live?'<span class="lv">● live</span>':"");
+  b.onclick=()=>{edit=s.id;sel=null;hostUi();draw()};$("#sl").appendChild(b)});$("#sn").value=scn().name}
+function lib(){const l=$("#lib");if(!l)return;l.innerHTML="";Object.entries(imgs).filter(([k,v])=>v.kind=="item").forEach(([id,v])=>{const i=document.createElement("img");i.src=v.data;i.draggable=true;i.title="Drag onto the scene";
+  i.ondragstart=e=>e.dataTransfer.setData("text/plain",id);i.onclick=()=>add(id,.5,.5);l.appendChild(i)})}
+function add(img,x,y){const h=camp.sizes[img]||camp.last||.15,it={id:uid(),img,x:cl(x,0,1),y:cl(y,0,1),h,r:0};scn().items.push(it);sel=it.id;camp.sizes[img]=h;camp.last=h;save();draw()}
+function select(id){sel=id;document.querySelectorAll(".it").forEach(x=>x.classList.toggle("sel",x.dataset.id===id));$("#tools").style.display=id?"flex":"none"}
+function act(a){const it=item(sel);if(!it)return;if(a=="x"){const s=scn();s.items=s.items.filter(i=>i!==it);sel=null}
+  else if(a=="l")it.r=(it.r+345)%360;else if(a=="r")it.r=(it.r+15)%360;else{it.h=cl(it.h*(a=="+"?1.1:1/1.1),.02,1.5);camp.sizes[it.img]=camp.last=it.h}
+  save();draw()}
+function pd(e){if(!host)return;const d=e.target.closest(".it");if(!d){select(null);return}select(d.dataset.id);const it=item(d.dataset.id),r=$("#stage").getBoundingClientRect();
+  drag={it,d,ox:(e.clientX-r.left)/r.width-it.x,oy:(e.clientY-r.top)/r.height-it.y};d.setPointerCapture(e.pointerId)}
+function pm(e){if(!drag)return;const r=$("#stage").getBoundingClientRect();drag.it.x=cl((e.clientX-r.left)/r.width-drag.ox,0,1);drag.it.y=cl((e.clientY-r.top)/r.height-drag.oy,0,1);place(drag.d,drag.it);save()}
+function pu(){if(drag){drag=null;save()}}
+function wh(e){if(!host)return;let it,d;if(drag){it=drag.it;d=drag.d}else{d=e.target.closest(".it");it=d&&item(d.dataset.id)}if(!it)return;e.preventDefault();
+  if(drag)it.r=(it.r+(e.deltaY<0?-6:6)+360)%360;else{it.h=cl(it.h*(e.deltaY<0?1.05:1/1.05),.02,1.5);camp.sizes[it.img]=camp.last=it.h}place(d,it);save()}
+function rolls(){if(!host)return;const ps=Object.values(players);$("#cnt").textContent=ps.length?ps.length+" player"+(ps.length>1?"s":"")+" here":"";
+  $("#rl").innerHTML=ps.length?ps.map(q=>`<span class="chip"><b>${esc(q.n)}</b> ${q.d?esc(q.d)+" → <b>"+q.v+"</b>":"—"}</span>`).join(" "):"waiting for players…"}
+</script></body></html>
