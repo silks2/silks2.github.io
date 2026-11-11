@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hues &amp; Clues Online</title>
+<style>
+:root{--bg:#f6f3ee;--sf:#fff;--tx:#222;--mu:#777;--ac:#e8590c;--bd:#ddd;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--sf:#222226;--tx:#eee;--mu:#999;--bd:#3a3a40}}
+:root[data-theme="dark"]{--bg:#17171a;--sf:#222226;--tx:#eee;--mu:#999;--bd:#3a3a40}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0}body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,sans-serif}
+button,input,select{font:inherit;padding:8px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);touch-action:manipulation}
+button{background:var(--ac);color:#fff;border:0;cursor:pointer;font-weight:600}button:disabled{opacity:.4;cursor:default}
+button.s{background:var(--sf);color:var(--tx);border:1px solid var(--bd)}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px}
+#app{max-width:1100px;margin:auto;padding:10px;display:grid;gap:10px;grid-template-columns:1fr 290px;align-items:start}
+@media(max-width:800px){#app{grid-template-columns:1fr}}
+#start{max-width:380px;margin:12vh auto;padding:16px;display:grid;gap:10px;text-align:center}
+.mu{color:var(--mu)}h2{margin:.2em 0}.code{background:var(--ac);color:#fff;padding:2px 10px;border-radius:8px;letter-spacing:3px}
+.col{display:grid;gap:10px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bw{display:grid;grid-template-columns:16px 1fr;grid-template-rows:14px auto}
+#tl{display:grid;grid-template-columns:repeat(24,1fr)}#ll{display:grid;grid-template-rows:repeat(12,1fr)}
+#tl b,#ll b{font-size:9px;text-align:center;color:var(--mu);font-weight:400;align-self:center}
+#g{display:grid;grid-template-columns:repeat(24,1fr);grid-template-rows:repeat(12,1fr);aspect-ratio:2/1;position:relative;cursor:crosshair;touch-action:manipulation}
+#g i{display:block}#mk{position:absolute;inset:0;pointer-events:none}
+.m{position:absolute;width:3.4%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #000;display:grid;place-items:center;font-size:clamp(7px,1.4vw,12px);font-weight:700}
+.m.k1{border-radius:30%}.m.me{outline:2px solid gold}
+.rg{position:absolute;border:2px solid #fff;box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000}.rg.r2{border-style:dashed}.rg.r0{border-width:3px}
+.sw{width:26px;height:26px;padding:0;border-radius:50%;border:2px solid var(--bd)}.sw.on{outline:3px solid var(--ac)}.sw.tk{opacity:.2}.sw:disabled{opacity:1}.sw.tk:disabled{opacity:.2}
+.sw.big{display:inline-block;width:36px;height:36px;vertical-align:middle;border-radius:8px;cursor:default}
+.pr{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);flex-wrap:wrap}.pal{display:flex;gap:4px;flex-wrap:wrap}
+.bar{height:10px;background:var(--bd);border-radius:5px;overflow:hidden;flex:1;min-width:80px}.bar i{display:block;height:100%;background:var(--ac);width:100%}
+.clue{font-size:26px;font-weight:700;color:var(--ac)}
+.lr{display:flex;gap:8px;align-items:center;padding:4px 0}.lr.me{font-weight:700}.lr .nn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--bd);display:inline-block}
+#cl{height:170px;overflow:auto;font-size:14px;margin-bottom:6px}#cl p{margin:2px 0;word-break:break-word}
+#ci,#ct{flex:1;min-width:0}
+#net{position:fixed;top:0;left:0;right:0;z-index:9;background:#c62828;color:#fff;text-align:center;font-size:13px;padding:5px;padding-top:calc(5px + env(safe-area-inset-top,0px))}
+</style></head><body>
+<div id="net" hidden>⚠ Connection lost – reconnecting…</div>
+<div id="start" class="card">
+<h1 style="margin:0">🎨 Hues &amp; Clues</h1>
+<p class="mu" style="margin:0">Give a colour clue, guess where it sits on the board.</p>
+<input id="nm" placeholder="Your name" maxlength="14">
+<button id="cr">Create lobby</button>
+<div class="row"><input id="jc" placeholder="Lobby code" maxlength="4" style="flex:1;text-transform:uppercase"><button id="jn" class="s">Join</button></div>
+<div id="er" class="mu"></div>
+</div>
+<div id="app" hidden>
+<div class="col">
+<div class="card row"><b>Hues &amp; Clues</b><span class="code" id="cd"></span><span style="flex:1"></span><button class="s" data-a="lv">Leave</button></div>
+<div class="card" id="main"></div>
+<div class="card bw" id="bw"><div></div><div id="tl"></div><div id="ll"></div><div id="g"></div></div>
+</div>
+<div class="col">
+<div class="card"><b>Leaderboard</b><div id="lb"></div></div>
+<div class="card"><b>Chat</b><div id="cl"></div><div class="row"><input id="ct" placeholder="Say something…" maxlength="140"><button id="cs">Send</button></div></div>
+</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COLS=24,ROWS=12,L='ABCDEFGHIJKLMNOPQRSTUVWX',PAL=['#111111','#ffffff','#e53935','#43a047','#1e88e5','#fb8c00','#8e24aa','#00acc1','#f06292','#8d6e63'];
+let room=null,R=null,me=null,S=null,code='',host=false,tg=null,G={},LK={},tmr=null,hostEnd=0,endAt=0,mine=[null,null],pm={},rv={m:{}},locked=false,chat=[],lastKey='',nm='',leaving=false;
+const cellName=i=>L[i%COLS]+((i/COLS|0)+1),cellCol=i=>`hsl(${(i%COLS)/COLS*360},85%,${88-(i/COLS|0)*6.3}%)`;
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]),cl=(v,a,b)=>Math.max(a,Math.min(b,+v||a));
+const inPlay=()=>/^(clue|guess)/.test(S.ph),freeCol=()=>PAL.findIndex((_,i)=>!S.P.some(p=>p.c===i));
+const nameOf=id=>{const p=S&&S.P.find(x=>x.id===id);return p?p.n:null};
+// ---------- board ----------
+(function(){let h='';for(let i=0;i<COLS*ROWS;i++)h+=`<i style="background:${cellCol(i)}"></i>`;$('#g').innerHTML=h+'<div id="mk"></div>';
+$('#tl').innerHTML=[...L].map(x=>`<b>${x}</b>`).join('');$('#ll').innerHTML=Array.from({length:ROWS},(_,i)=>`<b>${i+1}</b>`).join('')})();
+$('#g').addEventListener('pointerdown',e=>{if(!S)return;const r=S.ph==='guess1'?1:S.ph==='guess2'?2:0;if(!r||S.gv===me||locked)return;
+const b=e.currentTarget.getBoundingClientRect(),c=Math.min(COLS-1,Math.max(0,Math.floor((e.clientX-b.left)/b.width*COLS))),w=Math.min(ROWS-1,Math.max(0,Math.floor((e.clientY-b.top)/b.height*ROWS))),i=w*COLS+c;
+mine[r-1]=i;send('pick',{r,c:i});render()});
+function marks(){const el=$('#mk');if(!el)return;if(!S||!(inPlay()||S.ph==='final')){el.innerHTML='';return}
+const isG=S.gv===me;let m;
+if(S.ph==='final')m=rv.m;else if(isG)m=pm;else{m={...rv.m};m[me]=[...(m[me]||[null,null])];mine.forEach((v,k)=>{if(v!=null)m[me][k]=v})}
+let o='';
+if(S.ph==='final'&&rv.tg!=null){const tc=rv.tg%COLS,tr=rv.tg/COLS|0;[2,1,0].forEach(d=>{const x0=Math.max(0,tc-d),x1=Math.min(COLS-1,tc+d),y0=Math.max(0,tr-d),y1=Math.min(ROWS-1,tr+d);o+=`<div class="rg r${d}" style="left:${x0/COLS*100}%;top:${y0/ROWS*100}%;width:${(x1-x0+1)/COLS*100}%;height:${(y1-y0+1)/ROWS*100}%"></div>`})}
+else if(isG&&tg!=null){o+=`<div class="rg r0" style="left:${(tg%COLS)/COLS*100}%;top:${(tg/COLS|0)/ROWS*100}%;width:${100/COLS}%;height:${100/ROWS}%"></div>`}
+for(const id in m){const p=S.P.find(x=>x.id===id);if(!p)continue;(m[id]||[]).forEach((c,k)=>{if(c==null)return;o+=`<div class="m k${k}${id===me?' me':''}" style="left:${(c%COLS+.5)/COLS*100}%;top:${((c/COLS|0)+.5)/ROWS*100}%;background:${PAL[p.c]};color:${p.c===1?'#000':'#fff'}">${esc([...p.n][0]||'?')}</div>`})}
+el.innerHTML=o}
+// ---------- rendering ----------
+function phaseSync(){const k=S.e+S.ph;if(k===lastKey)return;lastKey=k;
+if(S.ph==='clue1'){mine=[null,null];rv={m:{}};pm={};if(!host)tg=null}
+if(S.ph==='guess1'||S.ph==='guess2')locked=false}
+function render(){if(!S)return;phaseSync();$('#cd').textContent=code;$('#bw').style.display=(S.ph==='lobby'||S.ph==='end')?'none':'';lb();main();marks();chatR()}
+function lb(){$('#lb').innerHTML=[...S.P].sort((a,b)=>b.s-a.s).map((p,i)=>`<div class="lr${p.id===me?' me':''}"><span>${i+1}</span><i class="dot" style="background:${PAL[p.c]}"></i><span class="nn">${esc(p.n)}${p.id===S.h?' 👑':''}${p.id===S.gv&&S.ph!=='lobby'?' 🎨':''}${(S.lk||[]).includes(p.id)?' ✓':''}</span><b>${p.s}</b></div>`).join('')}
+function main(){const el=$('#main'),ph=S.ph,isG=S.gv===me,gn=esc(nameOf(S.gv)||'?'),k=$('#ci'),kv=k?k.value:'',kf=k&&document.activeElement===k;let h='';
+const top=`<div class="mu">Game ${S.g+1}/${S.gm} · Round ${ph.slice(-1)} · Clue giver: <b>${gn}</b>${isG?' (you)':''}</div>`;
+if(ph==='lobby'){const sel=(id,arr,v)=>`<select id="${id}" ${host?'':'disabled'}>${arr.map(x=>`<option${x==v?' selected':''}>${x}</option>`).join('')}</select>`;
+h=`<h2>Lobby <span class="code">${esc(code)}</span></h2><p class="mu">Share this code with friends. Pick your marker colour:</p>`+S.P.map(p=>`<div class="pr"><span><b>${esc(p.n)}</b>${p.id===S.h?' 👑':''}${p.id===me?' (you)':''}</span><span class="pal">${PAL.map((c,i)=>`<button class="sw${p.c===i?' on':''}${S.P.some(x=>x.c===i&&x.id!==p.id)?' tk':''}" data-c="${i}" style="background:${c}" ${p.id!==me||S.P.some(x=>x.c===i&&x.id!==p.id)?'disabled':''}></button>`).join('')}</span></div>`).join('')
++`<div class="row" style="margin-top:10px">Games ${sel('sgm',[1,2,3,4,5,6,7,8,9,10],S.gm)} Round timer (s) ${sel('stm',[10,15,20,30,45,60,90,120],S.tm)}</div><div style="margin-top:10px">${host?`<button data-a="st" ${S.P.length<2?'disabled':''}>Start game</button>${S.P.length<2?' <span class="mu">Need 2+ players</span>':''}`:'<span class="mu">Waiting for the host to start…</span>'}</div>`}
+else if(ph==='clue1'||ph==='clue2'){const r=ph.slice(-1),w=r==='1'?'one-word':'two-word';
+h=top+(isG?`<p>Your colour: <span class="sw big" style="background:${tg!=null?cellCol(tg):'#888'}"></span> <b>${tg!=null?cellName(tg):''}</b> — also outlined on the board.</p><div class="row"><input id="ci" placeholder="Give a ${w} clue" maxlength="40"><button data-a="cb">Send clue</button></div>${r==='2'?'<p class="mu">Round 1 markers are now visible to everyone.</p>':''}`:`<p>${gn} is thinking of a ${w} clue…</p>${S.c[0]?`<p>Clue 1: <span class="clue">${esc(S.c[0])}</span></p>`:''}`)}
+else if(ph==='guess1'||ph==='guess2'){const r=+ph.slice(-1),pl=mine[r-1]!=null;
+h=top+`<div class="clue">${esc(S.c.filter(Boolean).join('  →  '))}</div><div class="row"><div class="bar"><i id="tb"></i></div><b id="tm"></b></div>`+(isG?`<p class="mu">You can see every marker as it's placed. ${(S.lk||[]).length} locked in.</p>`:`<p class="mu">${locked?'Locked in! Waiting for others…':pl?'Tap again to move your marker, then lock in.':'Tap the board to place your marker.'} Other players' markers stay hidden until the round ends.</p><button data-a="lk" ${pl&&!locked?'':'disabled'}>Lock in</button>`)}
+else if(ph==='final'){const pt=S.pt||{};h=top.replace(/Round \d/,'Results')+`<h2>Answer: <span class="sw big" style="background:${rv.tg!=null?cellCol(rv.tg):'#888'}"></span> ${rv.tg!=null?cellName(rv.tg):'…'}</h2><p>Clues: ${S.c.filter(Boolean).map(esc).join(' → ')}</p><p>Scoring zones on the board: centre square <b>3 pts</b> · solid ring <b>2 pts</b> · dashed ring <b>1 pt</b> (clue giver earns 1 per scoring marker).</p><p>${S.P.filter(p=>pt[p.id]).map(p=>`${esc(p.n)} <b>+${pt[p.id]}</b>`).join(' · ')||'Nobody scored.'}</p>`+(host?`<button data-a="nx">${S.g+1>=S.gm?'Final results':'Next game'}</button>`:'<span class="mu">Waiting for the host…</span>')}
+else if(ph==='end'){const mx=Math.max(...S.P.map(p=>p.s)),w=S.P.filter(p=>p.s===mx);
+h=`<h2>🏆 ${w.map(p=>esc(p.n)).join(' & ')} ${w.length>1?'tie':'wins'} with ${mx} points!</h2><div class="row">${host?'<button data-a="ag">Rehost same lobby</button>':'<span class="mu">Waiting for the host to rehost or leave…</span>'}<button class="s" data-a="lv">Leave</button></div>${host?'<p class="mu">If you leave, a random player becomes the host.</p>':''}`}
+el.innerHTML=h;const n=$('#ci');if(n){n.value=kv;if(kf)n.focus()}}
+function chatR(){const c=$('#cl');c.innerHTML=chat.slice(-60).map(x=>`<p><b>${esc(x.n)}:</b> ${esc(x.m)}</p>`).join('');c.scrollTop=c.scrollHeight}
+setInterval(()=>{const t=$('#tm');if(!t||!S||!S.ph.startsWith('guess'))return;const l=Math.max(0,(host?hostEnd:endAt)-Date.now());t.textContent=Math.ceil(l/1000)+'s';$('#tb').style.width=Math.min(100,l/(S.tm*1000)*100)+'%'},200);
+// ---------- actions ----------
+const send=(t,d={})=>host?H(me,{t,...d}):R&&R.emit('act',{t,...d});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a],[data-c]');if(!b||!S)return;
+if(b.dataset.c!=null)return send('col',{c:+b.dataset.c});const a=b.dataset.a;
+if(a==='st')send('start');else if(a==='nx')send('next');else if(a==='ag')send('again');else if(a==='lv')leave();
+else if(a==='lk'){if(mine[S.ph==='guess1'?0:1]!=null){locked=true;send('lock');render()}}
+else if(a==='cb')sendClue()});
+function sendClue(){const i=$('#ci');if(i&&i.value.trim())send('clue',{w:i.value})}
+document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;if(e.target.id==='ci')sendClue();if(e.target.id==='ct')sendChat()});
+document.addEventListener('change',e=>{if(e.target.id==='sgm'||e.target.id==='stm')send('set',{gm:$('#sgm').value,tm:$('#stm').value})});
+function sendChat(){const i=$('#ct'),v=i.value.trim();if(v&&R){R.emit('chat',{m:v.slice(0,140),n:nm});i.value=''}}
+$('#cs').onclick=sendChat;
+function leave(){if(!S)return;leaving=true;if(host){const o=S.P.filter(p=>p.id!==me);if(o.length){S.h=o[Math.random()*o.length|0].id;S.P=o;S.v++;R.emit('st',S)}}else R.emit('act',{t:'bye'});setTimeout(()=>leaveUI(),350)}
+function leaveUI(msg){leaving=false;$('#net').hidden=true;clearTimeout(tmr);try{R&&R.leave()}catch(e){}R=null;S=null;host=false;chat=[];lastKey='';$('#start').hidden=false;$('#app').hidden=true;$('#er').textContent=msg||''}
+// ---------- host logic ----------
+function push(){if(S.ph.startsWith('guess'))S.rem=Math.max(0,hostEnd-Date.now());S.v++;R.emit('st',S);render()}
+function toGiver(){if(S.gv===me){pm=G;render()}else R.emit('pv',{tg,m:G},S.gv)}
+function startGame(first){clearTimeout(tmr);if(first){S.g=0;S.ord=shuf(S.P.map(p=>p.id));S.P.forEach(p=>p.s=0)}
+S.ord=S.ord.filter(i=>S.P.some(p=>p.id===i));S.P.forEach(p=>{if(!S.ord.includes(p.id))S.ord.push(p.id)});
+S.gv=S.ord[S.g%S.ord.length];S.e++;tg=Math.random()*COLS*ROWS|0;G={};LK={};S.ph='clue1';S.c=['',''];S.lk=[];S.pt=null;push();toGiver()}
+function endRound(){clearTimeout(tmr);const r=S.ph==='guess1'?1:S.ph==='guess2'?2:0;if(!r)return;
+if(r===1){const m={};for(const i in G)if(G[i][0]!=null)m[i]=[G[i][0]];rv={m};R.emit('rv',{m});S.ph='clue2';S.lk=[];LK={};push();toGiver()}
+else{const pt={};let gp=0;S.P.forEach(p=>pt[p.id]=0);
+for(const i in G)G[i].forEach(c=>{if(c==null)return;const d=Math.max(Math.abs(c%COLS-tg%COLS),Math.abs((c/COLS|0)-(tg/COLS|0))),v=d===0?3:d<=1?2:d<=2?1:0;pt[i]=(pt[i]||0)+v;if(v)gp++});
+pt[S.gv]=gp;S.P.forEach(p=>p.s+=pt[p.id]||0);S.ph='final';S.pt=pt;rv={m:G,tg};R.emit('rv',rv);push()}}
+function H(id,a){const p=S.P.find(x=>x.id===id),t=a.t;
+if(t==='join'){if(!p&&S.P.length<10){S.P.push({id,n:String(a.n||'Player').slice(0,14),c:freeCol(),s:0});if(S.ord.length)S.ord.push(id)}return push()}
+if(!p)return;
+if(t==='col'){if(PAL[a.c]&&!S.P.some(x=>x.c===a.c))p.c=a.c;return push()}
+if(t==='bye'){S.P=S.P.filter(x=>x!==p);return S.P.length>1&&S.gv===id&&inPlay()?startGame(false):push()}
+const hs=id===S.h;
+if(hs&&t==='set'&&S.ph==='lobby'){S.gm=cl(a.gm,1,10);S.tm=cl(a.tm,10,120);return push()}
+if(hs&&t==='start'&&S.ph==='lobby'&&S.P.length>1)return startGame(true);
+if(hs&&t==='next'&&S.ph==='final'){S.g++;if(S.g>=S.gm){S.ph='end';S.gv=null;return push()}return startGame(false)}
+if(hs&&t==='again'&&S.ph==='end'){S.ph='lobby';S.g=0;S.gv=null;S.P.forEach(x=>x.s=0);return push()}
+if(t==='clue'&&id===S.gv&&(S.ph==='clue1'||S.ph==='clue2')){const r=S.ph==='clue1'?1:2,w=String(a.w||'').trim().split(/\s+/).slice(0,r).join(' ').slice(0,40);if(!w)return;
+S.c[r-1]=w;S.ph='guess'+r;S.lk=[];LK={};hostEnd=Date.now()+S.tm*1000;clearTimeout(tmr);tmr=setTimeout(endRound,S.tm*1000);return push()}
+const r=S.ph==='guess1'?1:S.ph==='guess2'?2:0;
+if(r&&id!==S.gv&&!LK[id]){
+if(t==='pick'&&a.r===r&&a.c>=0&&a.c<COLS*ROWS){(G[id]=G[id]||[null,null])[r-1]=a.c|0;return toGiver()}
+if(t==='lock'&&G[id]&&G[id][r-1]!=null){LK[id]=1;S.lk=Object.keys(LK);if(S.P.every(x=>x.id===S.gv||LK[x.id]))return endRound();return push()}}}
+// ---------- connection ----------
+// Players meet through a free public MQTT broker over secure WebSockets (client built in below, no libraries).
+// To use your own broker, just edit BROKERS. The first one that works is used; joiners try each in order.
+const BROKERS=['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://test.mosquitto.org:8081'],NS='hues-and-clues-v1';
+const HB=3000,PEER_TIMEOUT=15000,WATCHDOG=9000,STALE=14000;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms)),enc=new TextEncoder(),dec=new TextDecoder();
+const u16=n=>[n>>8,n&255],mstr=s=>{const b=enc.encode(s);return[...u16(b.length),...b]};
+const rlen=n=>{const o=[];do{let d=n%128;n=Math.floor(n/128);if(n)d|=128;o.push(d)}while(n);return o};
+const pkt=(b0,body)=>new Uint8Array([b0,...rlen(body.length),...body]);
+// minimal MQTT 3.1.1 client: connect, subscribe, publish (QoS 0), keep-alive
+function mqttOpen(url,cid,onPub,onDrop){return new Promise((res,rej)=>{
+let ws,buf=new Uint8Array(0),up=false,pid=1,acks={},pg=null;
+try{ws=new WebSocket(url,'mqtt')}catch(e){return rej(e)}
+ws.binaryType='arraybuffer';
+const tx=a=>{if(ws.readyState===1)ws.send(a)},fail=e=>{if(!up)rej(e)},to=setTimeout(()=>{fail(new Error('timeout'));try{ws.close()}catch(e){}},7000);
+const c={pub:(t,s)=>tx(pkt(0x30,[...mstr(t),...enc.encode(s)])),
+sub:t=>new Promise((ok,no)=>{const id=pid++;acks[id]=[ok,no];tx(pkt(0x82,[...u16(id),...mstr(t),0]));setTimeout(()=>{if(acks[id]){delete acks[id];no(new Error('subscribe timeout'))}},6000)}),
+close:()=>{try{tx(new Uint8Array([0xE0,0]))}catch(e){}try{ws.close()}catch(e){}}};
+ws.onopen=()=>tx(pkt(0x10,[0,4,77,81,84,84,4,2,...u16(30),...mstr(cid)]));
+ws.onmessage=e=>{const d=new Uint8Array(e.data),n=new Uint8Array(buf.length+d.length);n.set(buf);n.set(d,buf.length);buf=n;
+for(;;){if(buf.length<2)break;let i=1,m=1,len=0,b;do{if(i>=buf.length){i=-1;break}b=buf[i++];len+=(b&127)*m;m*=128}while(b&128);
+if(i<0||buf.length<i+len)break;const h=buf[0],body=buf.subarray(i,i+len),t=h>>4;buf=buf.subarray(i+len);
+if(t===2){if(body[1]===0){up=true;clearTimeout(to);pg=setInterval(()=>tx(new Uint8Array([0xC0,0])),10000);res(c)}else{fail(new Error('refused'));try{ws.close()}catch(x){}}}
+else if(t===9){const id=(body[0]<<8)|body[1],a=acks[id];delete acks[id];if(a)body[2]>2?a[1](new Error('refused')):a[0]()}
+else if(t===3){const q=(h>>1)&3,tl=(body[0]<<8)|body[1];try{onPub(dec.decode(body.subarray(2,2+tl)),dec.decode(body.subarray(2+tl+(q?2:0))))}catch(x){console.error(x)}}}};
+ws.onerror=()=>{};
+ws.onclose=()=>{clearTimeout(to);clearInterval(pg);if(up){up=false;onDrop()}else fail(new Error('closed'))}})}
+// room layer: broadcast + direct messages, presence (who is in the room), auto-reconnect
+async function joinRoom(url,code){
+const id=Array.from({length:8},()=>'abcdefghijkmnpqrstuvwxyz23456789'[Math.random()*32|0]).join(''),
+T=NS+'/'+code,TB=T+'/b',TU=T+'/u/'+id,H={},P=new Map(),pcb=[],scb=[],timers=[];
+let c=null,gen=0,closed=false,rx=Date.now(),offAt=0;
+const fire=(l,a)=>l.forEach(f=>{try{f(a)}catch(e){console.error(e)}}),
+raw=(t,o)=>{if(c)c.pub(t,JSON.stringify(o))},hi=first=>raw(TB,{f:id,e:'_p',d:first?1:0}),
+seen=f=>{const n=!P.has(f);P.set(f,Date.now());if(n)fire(pcb,{joined:[{peer:f}],left:[]})},
+gone=f=>{if(P.delete(f))fire(pcb,{joined:[],left:[{peer:f}]})},
+onPub=(t,s)=>{if(closed)return;rx=Date.now();let m;try{m=JSON.parse(s)}catch(e){return}
+if(!m||typeof m.f!=='string'||typeof m.e!=='string')return;
+if(m.f===id){if(m.e[0]!=='_')fire(H[m.e]||[],{peer:id,isMe:true,data:m.d});return}
+if(m.e==='_p'){seen(m.f);if(m.d===1)hi(false);return}
+if(m.e==='_x'){gone(m.f);return}
+seen(m.f);fire(H[m.e]||[],{peer:m.f,isMe:false,data:m.d})},
+up=async()=>{const g=++gen,cc=await mqttOpen(url,'hc'+id+g,(t,s)=>{if(g===gen)onPub(t,s)},()=>{if(g===gen)drop()});
+try{await cc.sub(TB);await cc.sub(TU)}catch(e){gen++;cc.close();throw e}
+if(closed){cc.close();return}c=cc;rx=Date.now()},
+drop=()=>{if(closed)return;c=null;offAt=offAt||rx;fire(scb,'offline');retry()},
+retry=async()=>{for(;;){await sleep(1500+Math.random()*1000);if(closed)return;try{await up();break}catch(e){}}
+if(closed)return;const off=Date.now()-offAt;offAt=0;
+if(off>STALE)return fire(scb,'stale');
+P.forEach((v,k)=>P.set(k,Date.now()));hi(true);fire(scb,'online')};
+await up();
+timers.push(setInterval(()=>{if(c)hi(false)},HB),setInterval(()=>{if(closed)return;const n=Date.now();
+if(c&&n-rx>WATCHDOG){gen++;try{c.close()}catch(e){}drop();return}
+if(c)P.forEach((t,f)=>{if(n-t>PEER_TIMEOUT)gone(f)})},2000));
+hi(true);
+return{id,emit:(ev,data,to)=>raw(to?T+'/u/'+to:TB,{f:id,e:ev,d:data}),on:(ev,f)=>{(H[ev]=H[ev]||[]).push(f)},
+peers:()=>[{peer:id,isMe:true,sameTab:true},...[...P.keys()].map(p=>({peer:p,isMe:false,sameTab:false}))],
+onPeers:f=>pcb.push(f),onStatus:f=>scb.push(f),
+leave:()=>{if(closed)return;raw(TB,{f:id,e:'_x'});closed=true;timers.forEach(clearInterval);const x=c;c=null;gen++;setTimeout(()=>x&&x.close(),120)}}}
+// ---------- lobby flow ----------
+const err=m=>$('#er').textContent=m,newCode=()=>{const a='ABCDEFGHJKMNPQRSTUVWXYZ';return Array.from({length:4},()=>a[Math.random()*a.length|0]).join('')};
+function takeover(){host=true;S.h=me;S.P=S.P.filter(p=>R.peers().some(y=>y.peer===p.id));if(inPlay())startGame(false);else push()}
+function attach(){me=R.id;let rj=0;
+R.on('act',m=>{if(host&&!m.isMe&&m.data)H(m.peer,m.data)});
+R.on('st',m=>{const d=m.data;if(m.isMe||!d||!d.P||!(m.peer===d.h||(S&&m.peer===S.h)))return;if(S&&d.v<=S.v)return;if(host&&d.h!==me)return;
+if(!host&&!leaving&&!d.P.some(p=>p.id===me)){if(d.P.length>=10)return leaveUI('That lobby is full.');if(Date.now()-rj>2500){rj=Date.now();R.emit('act',{t:'join',n:nm})}}
+const was=host;host=d.h===me;S=d;if(S.ph.startsWith('guess'))endAt=Date.now()+S.rem;
+if(host&&!was){if(inPlay())return startGame(false);return push()}
+$('#start').hidden=true;$('#app').hidden=false;render()});
+R.on('pv',m=>{const d=m.data;if(d&&S&&m.peer===S.h){if(d.tg!=null)tg=d.tg;pm=d.m||{};render()}});
+R.on('rv',m=>{if(S&&!m.isMe&&m.peer===S.h&&m.data){rv=m.data;if(!rv.m)rv.m={};render()}});
+R.on('chat',m=>{const d=m.data;if(!d||typeof d.m!=='string')return;chat.push({n:nameOf(m.peer)||String(d.n||'?').slice(0,14),m:d.m.slice(0,140)});chatR()});
+R.onStatus(s=>{$('#net').hidden=s==='online';if(s==='stale')leaveUI('You were disconnected for too long. Rejoin with code '+code+'.')});
+R.onPeers(ch=>{if(!S)return;ch.left.forEach(p=>{if(host){const q=S.P.find(x=>x.id===p.peer);if(q){S.P=S.P.filter(x=>x!==q);if(S.P.length>1&&S.gv===q.id&&inPlay())startGame(false);else push()}}
+else if(p.peer===S.h){const c=S.P.filter(x=>x.id!==S.h&&R.peers().some(y=>y.peer===x.id)).map(x=>x.id).sort()[0];if(c===me){S.P=S.P.filter(x=>x.id!==p.peer);takeover()}}})})}
+async function enter(c,asHost){nm=($('#nm').value.trim()||'Player').slice(0,14);err('Connecting…');$('#cr').disabled=$('#jn').disabled=true;
+try{
+if(asHost){let r=null;
+for(let t=0;t<4&&!R;t++){const k=newCode();r=null;
+for(const u of BROKERS){try{r=await joinRoom(u,k);break}catch(e){}}
+if(!r)break;await sleep(900);if(r.peers().length>1){r.leave();continue}R=r;code=k}
+if(!R)return err(r?'Could not find a free lobby code, try again.':'Could not reach the game server. Check your connection and try again.');
+attach();$('#start').hidden=true;$('#app').hidden=false;host=true;S={v:1,e:0,h:me,ph:'lobby',gm:3,tm:30,g:0,ord:[],P:[{id:me,n:nm,c:0,s:0}],c:['',''],lk:[]};render()}
+else{code=c;let any=false;
+for(const u of BROKERS){let r;try{r=await joinRoom(u,c)}catch(e){continue}
+any=true;R=r;attach();$('#start').hidden=true;$('#app').hidden=false;$('#main').innerHTML='<p class="mu">Joining lobby '+esc(c)+'…</p>';
+for(let k=0;k<2&&R===r&&!S;k++){r.emit('act',{t:'join',n:nm});for(let w=0;w<15&&R===r&&!S;w++)await sleep(100)}
+if(S||R!==r)return;r.leave();R=null}
+leaveUI(any?'Lobby '+c+' not found.':'Could not reach the game server. Check your connection and try again.')}
+}finally{$('#cr').disabled=$('#jn').disabled=false}}
+$('#cr').onclick=()=>enter('',true);
+$('#jn').onclick=()=>{const c=$('#jc').value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(c.length<3)return err('Enter the lobby code.');enter(c,false)};
+addEventListener('pagehide',()=>{try{R&&R.leave()}catch(e){}});addEventListener('pageshow',e=>{if(e.persisted)location.reload()});
+</script></body></html>
