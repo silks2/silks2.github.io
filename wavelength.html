@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wavelength</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Fredoka One','Fredoka',system-ui,sans-serif;font-weight:400}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,#1f1147,#4b2a8a 55%,#ff7a59) fixed;color:#2b1055;display:flex;justify-content:center;padding:16px}
+#app{width:100%;max-width:560px}
+h1{color:#fff;text-align:center;font-size:2.6rem;margin:8px 0 14px;text-shadow:0 4px 0 rgba(0,0,0,.25)}
+h2{margin:0 0 8px;font-size:1.4rem}
+.card{background:#fff;border-radius:26px;padding:20px;margin-bottom:14px;box-shadow:0 8px 0 rgba(0,0,0,.18)}
+.btn{font-size:1.15rem;border:0;border-radius:18px;padding:13px 22px;color:#fff;background:#ff9f1c;box-shadow:0 6px 0 #c96f00;cursor:pointer;width:100%;transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #c96f00}
+.btn.alt{background:#7b4dff;box-shadow:0 6px 0 #4a28b8}
+.btn.alt:active{box-shadow:0 2px 0 #4a28b8}
+.btn.ghost{background:transparent;color:#7b4dff;box-shadow:none;padding:8px;font-size:1rem}
+.btn:disabled{opacity:.45;pointer-events:none}
+input{width:100%;font-size:1.2rem;padding:12px 16px;border-radius:16px;border:3px solid #e4dcff;color:#2b1055;outline:0}
+input:focus{border-color:#7b4dff}
+.row{display:flex;gap:10px}
+.code{font-size:3.6rem;letter-spacing:.35em;text-align:center;color:#7b4dff;margin:4px 0 4px .35em}
+.pl{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:1.15rem}
+.dot{width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;font-size:.85rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+.chip{background:rgba(255,255,255,.18);color:#fff;border-radius:99px;padding:5px 12px;font-size:.9rem}
+.chip.psy{background:#ffd166;color:#2b1055}
+.ends{display:flex;justify-content:space-between;gap:8px;margin-top:8px}
+.ends b{padding:8px 14px;border-radius:14px;color:#fff;font-size:1.05rem}
+.clue{font-size:1.9rem;text-align:center;margin:6px 0 10px;color:#7b4dff;overflow-wrap:anywhere}
+.muted{color:#8b7fb3;text-align:center;margin:8px 0}
+.how{color:#fff;text-align:center;opacity:.9;margin:0 8px 14px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2b1055;color:#fff;padding:12px 20px;border-radius:16px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LET='ABCDEFGHJKLMNPQRSTUVWXYZ',PRE='wvl-game-';
+const COL=['#ef476f','#06d6a0','#118ab2','#e6a700','#9b5de5','#f15bb5','#00a6d6','#fb5607'];
+const SPECS=[['Cold','Hot'],['Bad Movie','Good Movie'],['Underrated','Overrated'],['Useless Superpower','Useful Superpower'],['Rough','Smooth'],['Boring','Exciting'],['Ugly','Beautiful'],['Weak','Strong'],['Cheap','Expensive'],['Quiet','Loud'],['Fast Food','Fine Dining'],['Scary','Cute'],['Easy','Difficult'],['Old Fashioned','Futuristic'],['Sad Song','Happy Song'],['Childish','Mature'],['Messy','Tidy'],['Rare','Common'],['Dangerous Animal','Safe Animal'],['Bad Superhero','Good Superhero'],['Healthy','Unhealthy'],['Lazy','Hardworking'],['Light','Heavy'],['Silly','Serious'],['Tiny','Gigantic'],['Disgusting Food','Delicious Food'],['Embarrassing','Impressive'],['Unlucky','Lucky'],['Soft','Hard'],['Bad Habit','Good Habit']];
+const CX=200,CY=200,R=180;
+let peer,isHost=false,conns={},hostConn,me={id:null,name:''},S=null,V=null,code='',myGuess=50,rd=-1,drag=false;
+try{me.name=localStorage.getItem('wvlName')||''}catch(e){}
+const pre=(new URLSearchParams(location.search).get('j')||'').toUpperCase().slice(0,4);
+
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2800)}
+function getName(){const n=($('#name')||{}).value;me.name=(n||'').trim();try{localStorage.setItem('wvlName',me.name)}catch(e){}if(!me.name){toast('Enter your name first');return false}return true}
+
+/* ---------- networking ---------- */
+function doCreate(){if(getName())startHost()}
+function startHost(){
+  code=Array.from({length:4},()=>LET[Math.random()*LET.length|0]).join('');
+  peer=new Peer(PRE+code);
+  peer.on('open',()=>{isHost=true;me.id='host';S={phase:'lobby',players:[{id:'host',name:me.name,score:0}],round:0,total:0,used:[]};push()});
+  peer.on('error',e=>{if(e.type==='unavailable-id'){peer.destroy();startHost()}else toast('Connection problem ('+e.type+')')});
+  peer.on('connection',c=>{conns[c.peer]=c;c.on('data',m=>handle(m,c));c.on('close',()=>drop(c.peer))});
+}
+function doJoin(){
+  if(!getName())return;
+  const cd=($('#jc').value||'').trim().toUpperCase();
+  if(cd.length!==4)return toast('Enter the 4-letter lobby code');
+  code=cd;peer=new Peer();
+  peer.on('open',id=>{
+    me.id=id;hostConn=peer.connect(PRE+cd,{reliable:true});
+    hostConn.on('open',()=>hostConn.send({t:'join',name:me.name}));
+    hostConn.on('data',m=>{if(m.t==='s'){V=m.s;show()}else if(m.t==='full'){toast('That game has already started or is full');leave()}});
+    hostConn.on('close',()=>{if(V){toast('The host left the game');leave()}});
+  });
+  peer.on('error',e=>{toast(e.type==='peer-unavailable'?'Lobby not found. Check the code and try again':'Connection problem ('+e.type+')');if(!V)leave()});
+}
+function leave(){try{peer&&peer.destroy()}catch(e){}peer=null;conns={};hostConn=null;isHost=false;S=V=null;rd=-1;show()}
+function act(m){isHost?handle(m,null):hostConn&&hostConn.send(m)}
+
+/* ---------- host logic ---------- */
+const pl=id=>S.players.find(p=>p.id===id);
+function view(id){
+  const v=JSON.parse(JSON.stringify(S)),open=v.phase==='reveal'||v.phase==='end';
+  if(!open&&id!==v.psy)delete v.target;
+  if(!open)v.players.forEach(p=>{if(p.id!==id)p.guess=null});
+  delete v.used;return v;
+}
+function push(){
+  for(const id in conns){try{conns[id].send({t:'s',s:view(id)})}catch(e){}}
+  V=view('host');show();
+}
+function newRound(){
+  S.round++;
+  if(S.round>S.total){S.phase='end';push();return}
+  S.psy=S.players[(S.round-1)%S.players.length].id;
+  let i;do{i=Math.random()*SPECS.length|0}while(S.used.includes(i)&&S.used.length<SPECS.length);
+  S.used.push(i);S.spec=SPECS[i];S.target=6+Math.random()*88|0;S.clue='';S.phase='clue';
+  S.players.forEach(p=>{p.guess=null;p.locked=0;p.pts=0});push();
+}
+function reveal(){
+  const g=S.players.filter(p=>p.id!==S.psy);let sum=0;
+  g.forEach(p=>{const d=Math.abs(p.guess-S.target);p.pts=d<=3?4:d<=8?3:d<=14?2:0;p.score+=p.pts;sum+=p.pts});
+  const ps=pl(S.psy);ps.pts=g.length?Math.round(sum/g.length):0;ps.score+=ps.pts;
+  S.phase='reveal';push();
+}
+function allLocked(){return S.players.filter(p=>p.id!==S.psy).every(p=>p.locked)}
+function handle(m,c){
+  const id=c?c.peer:'host';
+  if(m.t==='join'){
+    if(S.phase!=='lobby'||S.players.length>=10){c.send({t:'full'});setTimeout(()=>c.close(),400);return}
+    S.players.push({id,name:String(m.name||'Player').slice(0,14),score:0});
+  }else if(m.t==='start'&&id==='host'&&S.phase==='lobby'&&S.players.length>=2){
+    S.total=S.players.length;S.round=0;S.used=[];S.players.forEach(p=>p.score=0);newRound();return;
+  }else if(m.t==='clue'&&S.phase==='clue'&&id===S.psy){
+    S.clue=String(m.text).slice(0,60);S.phase='guess';
+  }else if(m.t==='lock'&&S.phase==='guess'&&id!==S.psy&&pl(id)&&!pl(id).locked){
+    const p=pl(id);p.guess=Math.max(0,Math.min(100,+m.v||0));p.locked=1;
+    if(allLocked()){reveal();return}
+  }else if(m.t==='next'&&id==='host'&&S.phase==='reveal'){newRound();return}
+  else if(m.t==='again'&&id==='host'&&S.phase==='end'){S.phase='lobby';S.players.forEach(p=>p.score=0)}
+  push();
+}
+function drop(id){
+  delete conns[id];
+  const i=S.players.findIndex(p=>p.id===id);if(i<0)return;
+  S.players.splice(i,1);
+  if(S.phase!=='lobby'&&S.phase!=='end'){
+    if(S.players.length<2)S.phase='end';
+    else if(id===S.psy){S.round--;newRound();return}
+    else if(S.phase==='guess'&&allLocked()){reveal();return}
+  }
+  push();
+}
+
+/* ---------- dial ---------- */
+const pt=(v,r)=>{const a=Math.PI*(1-v/100);return[CX+r*Math.cos(a),CY-r*Math.sin(a)]};
+const wedge=(a,b,c)=>{a=Math.max(0,a);b=Math.min(100,b);return`<path d="M${CX} ${CY}L${pt(a,R)}A${R} ${R} 0 0 1 ${pt(b,R)}Z" fill="${c}"/>`};
+const needle=(v,c,l,big)=>{const[x,y]=pt(v,R-4),[u,w]=pt(v,R-18);return`<line x1="${CX}" y1="${CY}" x2="${x}" y2="${y}" stroke="${c}" stroke-width="${big?7:5}" stroke-linecap="round"/><circle cx="${u}" cy="${w}" r="13" fill="${c}" stroke="#fff" stroke-width="3"/><text x="${u}" y="${w+5}" text-anchor="middle" fill="#fff" font-size="14">${l}</text>`};
+const ini=n=>esc((n||'?')[0].toUpperCase());
+const myP=()=>V.players.find(p=>p.id===me.id)||{};
+const idx=id=>Math.max(0,V.players.findIndex(p=>p.id===id));
+function mine(){return V.phase==='guess'&&V.psy!==me.id?needle(myGuess,COL[idx(me.id)%8],ini(me.name),1):''}
+function dial(){
+  let s=`<svg id="dial" viewBox="0 0 400 216" style="width:100%;display:block;touch-action:none;cursor:${canG()?'grab':'default'}"><defs><linearGradient id="g"><stop offset="0" stop-color="#4cc9f0"/><stop offset="1" stop-color="#f72585"/></linearGradient></defs><path d="M20 200A180 180 0 0 1 380 200Z" fill="url(#g)"/>`;
+  if(V.target!=null){
+    const t=V.target;
+    s+=wedge(t-14,t+14,'#ffd166')+wedge(t-8,t+8,'#ff9f1c')+wedge(t-3,t+3,'#ef476f');
+    [[t-11,2],[t+11,2],[t-5.5,3],[t+5.5,3],[t,4]].forEach(([v,n])=>{const[x,y]=pt(v,R-48);s+=`<text x="${x}" y="${y+5}" text-anchor="middle" fill="#fff" font-size="15">${n}</text>`});
+  }
+  if(V.phase==='reveal')V.players.forEach((p,i)=>{if(p.id!==V.psy&&p.guess!=null)s+=needle(p.guess,COL[i%8],ini(p.name))});
+  s+=`<g id="mine" style="pointer-events:none">${mine()}</g><circle cx="${CX}" cy="${CY}" r="22" fill="#2b1055" style="pointer-events:none"/></svg>`;
+  return s;
+}
+const canG=()=>V&&V.phase==='guess'&&V.psy!==me.id&&!myP().locked;
+function setFrom(e){
+  const svg=$('#dial');if(!svg)return;
+  const P=svg.createSVGPoint();P.x=e.clientX;P.y=e.clientY;
+  const q=P.matrixTransform(svg.getScreenCTM().inverse());
+  let a=Math.atan2(CY-q.y,q.x-CX);if(a<0)a=q.x<CX?Math.PI:0;
+  myGuess=Math.round(Math.max(0,Math.min(100,100*(1-a/Math.PI))));
+  $('#mine').innerHTML=mine();
+}
+document.addEventListener('pointerdown',e=>{const d=e.target.closest&&e.target.closest('#dial');if(d&&canG()){drag=true;try{d.setPointerCapture(e.pointerId)}catch(x){}setFrom(e);e.preventDefault()}});
+document.addEventListener('pointermove',e=>{if(drag)setFrom(e)});
+['pointerup','pointercancel'].forEach(t=>document.addEventListener(t,()=>drag=false));
+
+/* ---------- screens ---------- */
+function show(){
+  const keep=($('#clue')||{}).value||'';
+  $('#app').innerHTML='<h1>🌊 Wavelength</h1>'+(!V?home():V.phase==='lobby'?lobby():V.phase==='end'?end():game());
+  if(keep&&$('#clue'))$('#clue').value=keep;
+}
+function home(){return`<p class="how">One player is the Psychic and sees a hidden target on the dial. They give a clue, everyone else drags the dial to guess where it is. Closer guesses score more!</p>
+<div class="card"><h2>Your name</h2><input id="name" maxlength="14" placeholder="e.g. Sunny" value="${esc(me.name)}"></div>
+<div class="card"><button class="btn" onclick="doCreate()">Create a lobby</button><p class="muted">or join your friends</p>
+<div class="row"><input id="jc" maxlength="4" placeholder="CODE" style="text-transform:uppercase;text-align:center;letter-spacing:.2em" value="${esc(pre)}"><button class="btn alt" style="width:auto" onclick="doJoin()">Join</button></div></div>`}
+function copyLink(){
+  const u=location.href.split('?')[0].split('#')[0]+'?j='+code;
+  (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>toast('Invite link copied!')).catch(()=>prompt('Copy this invite link:',u));
+}
+function lobby(){
+  const n=V.players.length;
+  return`<div class="card" style="text-align:center"><div class="muted">Lobby code</div><div class="code">${code}</div><button class="btn ghost" onclick="copyLink()">📋 Copy invite link</button></div>
+<div class="card"><h2>Players (${n}/10)</h2>${V.players.map((p,i)=>`<div class="pl"><span class="dot" style="background:${COL[i%8]}">${ini(p.name)}</span><span style="flex:1">${esc(p.name)}</span>${i===0?'👑':''}</div>`).join('')}</div>
+${isHost?`<button class="btn" ${n<2?'disabled':''} onclick="act({t:'start'})">${n<2?'Waiting for friends…':'Start game'}</button>`:'<p class="how">Waiting for the host to start…</p>'}
+<button class="btn ghost" style="color:#fff" onclick="leave()">Leave lobby</button>`;
+}
+function game(){
+  if(V.round!==rd){rd=V.round;myGuess=50}
+  return`<div class="chips">${V.players.map(p=>`<span class="chip ${p.id===V.psy?'psy':''}">${p.id===V.psy?'🔮 ':''}${esc(p.name)} · ${p.score}</span>`).join('')}</div>
+<div class="card"><div class="muted" style="margin-top:0">Round ${V.round} of ${V.total}</div>${dial()}<div class="ends"><b style="background:#118ab2">${V.spec[0]}</b><b style="background:#d61a7a">${V.spec[1]}</b></div></div>
+<div class="card">${panel()}</div>`;
+}
+function sendClue(){const v=($('#clue').value||'').trim();if(!v)return toast('Type a clue first');act({t:'clue',text:v})}
+function panel(){
+  const ps=V.players,amP=me.id===V.psy,psy=ps.find(p=>p.id===V.psy)||{name:'?'};
+  const g=ps.filter(p=>p.id!==V.psy),lk=g.filter(p=>p.locked).length,clue=`<div class="clue">“${esc(V.clue)}”</div>`;
+  if(V.phase==='clue')return amP
+    ?`<h2>You’re the Psychic! 🔮</h2><p class="muted" style="text-align:left">The target is shown on your dial. Give a word or phrase that hints where it sits between the two ends. No numbers!</p><div class="row"><input id="clue" maxlength="60" placeholder="Your clue…" onkeydown="if(event.key==='Enter')sendClue()"><button class="btn" style="width:auto" onclick="sendClue()">Send</button></div>`
+    :`<p class="muted">🔮 ${esc(psy.name)} is thinking of a clue…</p>`;
+  if(V.phase==='guess'){
+    if(amP)return clue+`<p class="muted">Waiting for guesses… ${lk}/${g.length} locked in</p>`;
+    return myP().locked?clue+`<p class="muted">✅ Locked in! Waiting for the others… ${lk}/${g.length}</p>`
+      :clue+`<p class="muted">Drag the dial to where you think the target is</p><button class="btn" onclick="act({t:'lock',v:myGuess})">Lock in guess</button>`;
+  }
+  const rows=[...g].sort((a,b)=>b.pts-a.pts).map(p=>`<div class="pl"><span class="dot" style="background:${COL[idx(p.id)%8]}">${ini(p.name)}</span><span style="flex:1">${esc(p.name)}</span><span class="muted" style="margin:0">off by ${Math.abs(p.guess-V.target)}</span><b>+${p.pts}</b></div>`).join('');
+  return clue+`<div class="muted" style="margin-top:0">Reveal! Bullseye is worth 4 points</div>${rows}<div class="pl"><span style="width:28px;text-align:center">🔮</span><span style="flex:1">${esc(psy.name)} <span class="muted">(average)</span></span><b>+${psy.pts}</b></div>`
+    +(isHost?`<button class="btn" style="margin-top:10px" onclick="act({t:'next'})">${V.round>=V.total?'See results 🏆':'Next round'}</button>`:'<p class="muted">Waiting for the host…</p>');
+}
+function end(){
+  const s=[...V.players].sort((a,b)=>b.score-a.score);
+  return`<div class="card"><h2 style="text-align:center;font-size:1.8rem">🏆 ${esc(s[0].name)} wins!</h2>${s.map((p,i)=>`<div class="pl"><span style="width:30px;text-align:center">${['🥇','🥈','🥉'][i]||i+1}</span><span style="flex:1">${esc(p.name)}</span><b>${p.score} pts</b></div>`).join('')}</div>
+${isHost?`<button class="btn" onclick="act({t:'again'})">Play again</button>`:'<p class="how">Waiting for the host to start a new game…</p>'}
+<button class="btn ghost" style="color:#fff" onclick="leave()">Leave game</button>`;
+}
+show();
+</script>
+</body>
+</html>
