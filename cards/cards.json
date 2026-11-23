@@ -67,7 +67,7 @@
 {"id":"all-might","name":"All Might","show":"my-hero-academia","vibe":"Hero","spd":94,"str":96,"ski":75,"log":55,"hp":900,"ico":"✌️"},
 {"id":"tomura-shigaraki","name":"Tomura Shigaraki","show":"my-hero-academia","vibe":"Broken","spd":70,"str":65,"ski":91,"log":80,"hp":780,"ico":"🖐️"},
 {"id":"lloyd-garmadon","name":"Lloyd Garmadon","show":"ninjago","vibe":"Hero","spd":65,"str":86,"ski":93,"log":86,"hp":650,"ico":"💚"},
-{"id":"lord-garmagon","name":"Lord Garmagon","show":"ninjago","vibe":"Villain","spd":65,"str":88,"ski":90,"log":83,"hp":500,"ico":"😈⚫️"},
+{"id":"lord-garmagon","name":"Lord Garmadon","show":"ninjago","vibe":"Villain","spd":65,"str":88,"ski":90,"log":83,"hp":500,"ico":"😈⚫️"},
 {"id":"sensei-wu","name":"Sensei Wu","show":"ninjago","vibe":"Hero","spd":65,"str":75,"ski":95,"log":91,"hp":575,"ico":"👴"}
 ]
 }
