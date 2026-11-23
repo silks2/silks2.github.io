@@ -155,9 +155,9 @@ function build(d){
   BY=Object.fromEntries(CARDS.map(c=>[c.id,c]));
 }
 const PACKS=[
- {n:"Bronze Pack",ico:"📦",cost:100,w:[60,30,9,1]},
- {n:"Gold Pack",ico:"🎁",cost:500,w:[15,40,40,5]},
- {n:"Legend Pack",ico:"💎",cost:2000,w:[0,20,60,20]}
+ {n:"Bronze Pack",ico:"📦",cost:750,w:[89,9,2,0.001]},
+ {n:"Gold Pack",ico:"🎁",cost:3200,w:[19,35,45,0.06]},
+ {n:"Legend Pack",ico:"💎",cost:8000,w:[0,16,80,4]}
 ];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
