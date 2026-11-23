@@ -60,7 +60,7 @@
 {"id":"the-horse","name":"The Horse","show":"family-guy","vibe":"Neutral","spd":81,"str":73,"ski":65,"log":19,"hp":545,"ico":"🐎"},
 {"id":"ernie-the-giant-chicken","name":"Ernie the Giant Chicken","show":"family-guy","vibe":"Hero","spd":61,"str":84,"ski":69,"log":41,"hp":710,"ico":"🐔"},
 {"id":"eren-jaeger","name":"Eren Jaeger","show":"attack-on-titan","vibe":"Neutral","spd":75,"str":95,"ski":83,"log":57,"hp":800,"ico":"🕊"},
-{"id":"senku","name":"Senku","show":"dr-stone","vibe":"Hero","spd":45,"str":33,"ski":69,"log":93,"hp":410,"ico":"🧪"},
+{"id":"senku","name":"Senku","show":"dr-stone","vibe":"Smart","spd":45,"str":33,"ski":69,"log":93,"hp":410,"ico":"🧪"},
 {"id":"tsukasa","name":"Tsukasa","show":"dr-stone","vibe":"Neutral","spd":80,"str":80,"ski":78,"log":56,"hp":660,"ico":"🦁"},
 {"id":"kohaku","name":"Kohaku","show":"dr-stone","vibe":"Neutral","spd":83,"str":74,"ski":82,"log":43,"hp":500,"ico":"🦍"},
 {"id":"deku","name":"Deku","show":"my-hero-academia","vibe":"Hero","spd":93,"str":92,"ski":80,"log":82,"hp":500,"ico":"🥦"},
