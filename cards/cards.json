@@ -13,9 +13,9 @@
 {"id":"rick-and-morty","name":"Rick and Morty","genre":"Sci-Fi"},
 {"id":"the-quintessential-quintuplets","name":"The Quintessential Quintuplets","genre":"Anime"},
 {"id":"family-guy","name":"Family Guy","genre":"Comedy"},
-{"id":"attack-on-titan","name":"Attack on titan","genre":"Anime"},
-{"id":"dr-stone","name":"dr stone","genre":"Anime"},
-{"id":"my-hero-academia","name":"my hero academia","genre":"Anime"},
+{"id":"attack-on-titan","name":"Attack on Titan","genre":"Anime"},
+{"id":"dr-stone","name":"Dr. Stone","genre":"Anime"},
+{"id":"my-hero-academia","name":"My Hero Academia","genre":"Anime"},
 {"id":"ninjago","name":"ninjago","genre":"Animation"}
 ],
 "cards":[
