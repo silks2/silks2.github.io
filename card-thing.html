@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fighter Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6ebf4;--panel:#fff;--text:#142033;--muted:#5c6a82;--line:#c8d1e0;--accent:#e8394d;--accent-t:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1726;--panel:#18233a;--text:#eef2fa;--muted:#93a1bd;--line:#2a3856;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1726;--panel:#18233a;--text:#eef2fa;--muted:#93a1bd;--line:#2a3856;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:500 17px/1.35 "Barlow Condensed",system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit;cursor:pointer;color:inherit}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:14px 20px;border-bottom:2px solid var(--line);background:var(--panel)}
+h1{margin:0;font-size:30px;font-weight:800;letter-spacing:.5px}
+nav{display:flex;gap:6px}
+nav button{border:2px solid var(--line);background:none;border-radius:8px;padding:6px 16px;font-weight:600}
+nav button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-t)}
+.coins{margin-left:auto;font-weight:800;font-size:22px}
+main{max-width:980px;margin:0 auto;padding:20px}
+[hidden]{display:none!important}
+h2{font-size:24px;font-weight:800;margin:0 0 10px}
+.note{color:var(--muted);margin:0 0 16px}
+
+/* cards */
+.card{--cw:120px;width:var(--cw);height:calc(var(--cw)*1.45);font-size:calc(var(--cw)/10);border-radius:calc(var(--cw)/9);padding:.7em;display:flex;flex-direction:column;position:relative;color:#1a1a1a;border:2px solid rgba(0,0,0,.25);overflow:hidden;line-height:1.1}
+.card.bronze{background:linear-gradient(160deg,#c58a5a,#8a5a34)}
+.card.silver{background:linear-gradient(160deg,#e3e7ec,#8f98a3)}
+.card.gold{background:linear-gradient(160deg,#fbe38a,#b8860b)}
+.card.legend{background:linear-gradient(160deg,#5b2d9e,#c23b7a 60%,#ff9a5a);color:#fff;box-shadow:0 0 16px #ff9a5a99}
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.ovr{font-size:2.6em;font-weight:800;line-height:.9}
+.ico{font-size:2.2em;line-height:1}
+.nm{font-weight:800;font-size:1.25em;margin-top:.3em;text-transform:none}
+.sub{opacity:.75;font-size:.9em;margin-bottom:.4em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st{display:grid;grid-template-columns:1fr 1fr;gap:.1em .6em;font-weight:600;font-size:.95em}
+.st b{margin-left:.35em;font-weight:800}
+.hp{margin-top:auto;font-weight:800;font-size:1.05em}
+.tags{display:flex;gap:.3em;margin-top:.3em}
+.tags i{font-style:normal;background:rgba(0,0,0,.22);color:#fff;border-radius:99px;padding:.1em .6em;font-size:.85em}
+
+/* store */
+.packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.pack{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+.pack .big{font-size:56px}
+.pack h3{margin:4px 0;font-size:24px;font-weight:800}
+.pack p{margin:0 0 12px;color:var(--muted)}
+.btn{background:var(--accent);color:var(--accent-t);border:0;border-radius:8px;padding:9px 18px;font-weight:800}
+.btn.alt{background:none;border:2px solid var(--line);color:var(--text)}
+.odds{font-size:15px;color:var(--muted);margin-bottom:12px}
+
+/* team */
+.stats{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:14px}
+.stats b{font-size:26px;font-weight:800}
+.bar{flex:1 1 220px;height:14px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent);transition:width .3s}
+.break{color:var(--muted);font-size:15px;width:100%}
+.pitch{display:flex;flex-direction:column;gap:12px;align-items:center;padding:16px 8px;border-radius:14px;background:repeating-linear-gradient(90deg,#1f7a4d 0 60px,#1c6f46 60px 120px);margin-bottom:22px}
+.row{display:flex;gap:12px;justify-content:center}
+.slot{--cw:120px;width:var(--cw);height:calc(var(--cw)*1.45);position:relative;border-radius:calc(var(--cw)/9);cursor:pointer}
+.slot .empty{width:100%;height:100%;border:3px dashed #ffffffaa;border-radius:inherit;display:grid;place-items:center;font-size:38px;color:#ffffffcc}
+.slot.sel{outline:4px solid #fff;outline-offset:3px}
+.chem{position:absolute;left:-6px;bottom:-6px;background:var(--accent);color:#fff;font-weight:800;border-radius:99px;min-width:30px;height:30px;display:grid;place-items:center;border:2px solid #fff}
+.x{position:absolute;right:-6px;top:-6px;width:26px;height:26px;border-radius:50%;border:2px solid #fff;background:#222;color:#fff;font-size:13px;padding:0;line-height:1}
+.col{display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:14px;justify-items:center}
+.cc{position:relative;cursor:pointer}
+.cc.dim{opacity:.4;cursor:default}
+.cnt{position:absolute;right:-4px;bottom:-6px;background:#222;color:#fff;border-radius:99px;padding:0 8px;font-weight:800;border:2px solid #fff}
+
+/* overlay */
+#ov{position:fixed;inset:0;background:rgba(8,12,22,.92);z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;overflow:auto;color:#fff}
+.reveal{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.flip{width:132px;height:191px;perspective:800px;cursor:pointer}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .55s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.back{border-radius:14px;background:linear-gradient(145deg,#e8394d,#7a1d6b);border:3px solid #fff3;display:grid;place-items:center;font-size:48px}
+.front{transform:rotateY(180deg)}
+.front .card{--cw:132px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#222;color:#fff;padding:8px 16px;border-radius:8px;z-index:30}
+@media (max-width:520px){.card,.slot{--cw:96px}.row{gap:8px}.front .card{--cw:132px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚔️ Fighter Cards</h1>
+  <nav><button data-tab="store" class="on">Packs</button><button data-tab="team">Team</button></nav>
+  <div class="coins">🪙 ∞</div>
+</header>
+<main>
+  <section id="store">
+    <h2>Packs</h2>
+    <p class="note">Coins are unlimited while we build. Every pack holds 5 fighters.</p>
+    <p class="note" id="src" hidden>Using the built-in starter cards because cards/cards.json couldn’t be loaded.</p>
+    <div class="packs" id="packs"></div>
+    <p class="note" id="owned" style="margin-top:18px"></p>
+    <button class="btn alt" id="reset">Reset collection</button>
+  </section>
+  <section id="team" hidden>
+    <h2>Your team</h2>
+    <p class="note">Tap an empty slot, then tap a fighter below. Tap ✕ to remove. Each fighter can only be on the team once.</p>
+    <div class="stats">
+      <div>Chemistry <b id="chT">0</b> / 63</div>
+      <div class="bar"><span id="chB" style="width:0"></span></div>
+      <div>Avg overall <b id="avg">–</b></div>
+      <div>Total health <b id="hpT">0</b></div>
+      <div class="break" id="brk"></div>
+    </div>
+    <div class="pitch" id="pitch"></div>
+    <h2>Collection</h2>
+    <div class="col" id="col"></div>
+  </section>
+</main>
+<div id="ov" hidden></div>
+<div id="toast" hidden></div>
+<script>
+// ---- Card data: name, show/film, genre, personality, SPD, STR, SKL, LOG, health, icon ----
+// Only used if cards/cards.json can’t be loaded. Real cards come from the card maker’s cards.json.
+const FALLBACK=[
+["Darth Vader","Star Wars","Sci-Fi","Villain",70,95,90,80,900,"🪖"],
+["Luke Skywalker","Star Wars","Sci-Fi","Hero",78,74,88,76,700,"🗡️"],
+["Yoda","Star Wars","Sci-Fi","Neutral",88,62,99,97,500,"🐸"],
+["The Terminator","Terminator 2","Sci-Fi","Neutral",60,92,78,70,950,"🤖"],
+["Batman","The Dark Knight","Superhero","Hero",80,80,95,92,750,"🦇"],
+["Joker","The Dark Knight","Superhero","Evil",66,60,82,92,500,"🃏"],
+["Iron Man","Avengers","Superhero","Hero",78,76,88,97,650,"🦾"],
+["Thanos","Avengers","Superhero","Evil",55,99,82,93,1000,"🟣"],
+["Hulk","Avengers","Superhero","Broken",66,99,55,48,950,"💚"],
+["Homer Simpson","The Simpsons","Comedy","Stupid",30,55,20,8,600,"🍩"],
+["Bart Simpson","The Simpsons","Comedy","Neutral",62,35,60,55,300,"🛹"],
+["SpongeBob","SpongeBob","Comedy","Hero",70,40,55,35,350,"🧽"],
+["Patrick Star","SpongeBob","Comedy","Stupid",30,70,20,5,500,"⭐"],
+["Shrek","Shrek","Comedy","Neutral",40,90,48,55,900,"🧅"],
+["Donkey","Shrek","Comedy","Stupid",60,30,35,25,400,"🫏"],
+["Walter White","Breaking Bad","Crime","Broken",40,45,72,97,350,"🧪"],
+["Jesse Pinkman","Breaking Bad","Crime","Broken",55,50,58,52,380,"🧢"],
+["Gus Fring","Breaking Bad","Crime","Evil",50,62,80,94,450,"🍗"],
+["Gandalf","Lord of the Rings","Fantasy","Hero",55,70,92,98,700,"🧙"],
+["Sauron","Lord of the Rings","Fantasy","Evil",62,99,88,90,1000,"👁️"],
+["Gollum","Lord of the Rings","Fantasy","Broken",86,38,70,62,300,"💍"],
+["Frodo Baggins","Lord of the Rings","Fantasy","Hero",45,30,40,60,250,"🏔️"]
+];
+const TIERS=["bronze","silver","gold","legend"];
+const tier=o=>o>=86?"legend":o>=75?"gold":o>=55?"silver":"bronze";
+// overall = average of the four stats (health is separate)
+let CARDS=[],BY={};
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function fromFallback(){const shows=[],seen={};const cards=FALLBACK.map(a=>{const sid=slug(a[1]);if(!seen[sid]){seen[sid]=1;shows.push({id:sid,name:a[1],genre:a[2]})}return{id:slug(a[0]),name:a[0],show:sid,vibe:a[3],spd:a[4],str:a[5],ski:a[6],log:a[7],hp:a[8],ico:a[9]}});return{shows,cards}}
+// Turns the cards.json data into game cards. Overall is always calculated here from the four stats.
+function build(d){
+  const sh=Object.fromEntries(d.shows.map(s=>[s.id,s]));
+  CARDS=d.cards.filter(c=>sh[c.show]).map(c=>{const s=sh[c.show],o={id:c.id,name:c.name,show:s.name,showId:s.id,genre:s.genre,vibe:c.vibe,spd:c.spd,str:c.str,ski:c.ski,log:c.log,hp:c.hp,ico:c.ico||"❔"};o.ovr=Math.round((o.spd+o.str+o.ski+o.log)/4);o.r=tier(o.ovr);return o});
+  BY=Object.fromEntries(CARDS.map(c=>[c.id,c]));
+}
+const PACKS=[
+ {n:"Bronze Pack",ico:"📦",cost:100,w:[60,30,9,1]},
+ {n:"Gold Pack",ico:"🎁",cost:500,w:[15,40,40,5]},
+ {n:"Legend Pack",ico:"💎",cost:2000,w:[0,20,60,20]}
+];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+let own={},team=Array(7).fill(null),sel=null;
+try{own=JSON.parse(localStorage.getItem("fc_own")||"{}");const t=JSON.parse(localStorage.getItem("fc_team")||"null");if(Array.isArray(t)&&t.length===7)team=t}catch(e){}
+const save=()=>{try{localStorage.setItem("fc_own",JSON.stringify(own));localStorage.setItem("fc_team",JSON.stringify(team))}catch(e){}};
+
+
+function cardHTML(c){return `<div class="card ${c.r}"><div class="top"><span class="ovr">${c.ovr}</span><span class="ico">${c.ico}</span></div><div class="nm">${esc(c.name)}</div><div class="sub">${esc(c.show)}</div><div class="st"><span>SPD<b>${c.spd}</b></span><span>STR<b>${c.str}</b></span><span>SKL<b>${c.ski}</b></span><span>LOG<b>${c.log}</b></span></div><div class="hp">❤ ${c.hp}</div><div class="tags"><i>${esc(c.genre)}</i><i>${esc(c.vibe)}</i></div></div>`}
+function toast(t){const e=$("#toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,1800)}
+
+// ---- Chemistry: every pair of fighters earns 1 point per shared category (show, genre, personality) ----
+function chem(){
+  const pc=Array(7).fill(0),b=[0,0,0];let tot=0;
+  for(let i=0;i<7;i++)for(let j=i+1;j<7;j++){
+    if(!team[i]||!team[j])continue;
+    const A=BY[team[i]],B=BY[team[j]];
+    [A.showId===B.showId,A.genre===B.genre,A.vibe===B.vibe].forEach((m,k)=>{if(m){b[k]++;tot++;pc[i]++;pc[j]++}});
+  }
+  return{tot,b,pc};
+}
+
+// ---- Packs ----
+function renderStore(){
+  $("#packs").innerHTML=PACKS.map((p,i)=>`<div class="pack"><div class="big">${p.ico}</div><h3>${p.n}</h3><p>5 fighters · 🪙 ${p.cost} (free for now)</p><div class="odds">Bronze ${p.w[0]}% · Silver ${p.w[1]}% · Gold ${p.w[2]}% · Legend ${p.w[3]}%</div><button class="btn" data-pack="${i}">Open pack</button></div>`).join("");
+  $("#owned").textContent=`Collection: ${Object.keys(own).length} of ${CARDS.length} different fighters`;
+}
+function roll(p){
+  let r=Math.random()*100,t=0;
+  for(;t<3&&r>=p.w[t];t++)r-=p.w[t];
+  let pool=CARDS.filter(c=>c.r===TIERS[t]);if(!pool.length)pool=CARDS;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function openPack(i){
+  const got=Array.from({length:5},()=>roll(PACKS[i]));
+  got.forEach(c=>own[c.id]=(own[c.id]||0)+1);save();
+  const ov=$("#ov");ov.hidden=false;
+  ov.innerHTML=`<div>Tap each card to reveal it</div><div class="reveal">${got.map(c=>`<div class="flip"><div class="in"><div class="face back">⚔️</div><div class="face front">${cardHTML(c)}</div></div></div>`).join("")}</div><div><button class="btn alt" id="all" style="color:#fff;border-color:#fff6">Reveal all</button> <button class="btn" id="done">Add to collection</button></div>`;
+  ov.querySelectorAll(".flip").forEach(f=>f.onclick=()=>f.classList.add("on"));
+  $("#all").onclick=()=>ov.querySelectorAll(".flip").forEach((f,k)=>setTimeout(()=>f.classList.add("on"),k*150));
+  $("#done").onclick=()=>{ov.hidden=true;renderStore();renderTeam()};
+}
+
+// ---- Team ----
+function renderTeam(){
+  const {tot,b,pc}=chem(),on=team.filter(Boolean).map(id=>BY[id]);
+  $("#chT").textContent=tot;$("#chB").style.width=tot/63*100+"%";
+  $("#avg").textContent=on.length?Math.round(on.reduce((s,c)=>s+c.ovr,0)/on.length):"–";
+  $("#hpT").textContent=on.reduce((s,c)=>s+c.hp,0);
+  $("#brk").textContent=`Same show: ${b[0]} of 21 pairs · Same genre: ${b[1]} of 21 · Same personality: ${b[2]} of 21`;
+  const slot=i=>{const c=team[i]&&BY[team[i]];return `<div class="slot ${sel===i?"sel":""}" data-i="${i}">${c?cardHTML(c)+`<span class="chem" title="Chemistry with the other six">${pc[i]}</span><button class="x" data-x="${i}" aria-label="Remove">✕</button>`:`<div class="empty">+</div>`}</div>`};
+  let k=0;$("#pitch").innerHTML=[2,3,2].map(n=>`<div class="row">${Array.from({length:n},()=>slot(k++)).join("")}</div>`).join("");
+  const ids=Object.keys(own).filter(id=>BY[id]).sort((a,b)=>BY[b].ovr-BY[a].ovr);
+  $("#col").innerHTML=ids.length?ids.map(id=>`<div class="cc ${team.includes(id)?"dim":""}" data-id="${esc(id)}">${cardHTML(BY[id])}${own[id]>1?`<span class="cnt">×${own[id]}</span>`:""}</div>`).join(""):`<p class="note">No fighters yet. Open a pack first.</p>`;
+}
+$("#pitch").onclick=e=>{
+  const x=e.target.closest("[data-x]");
+  if(x){team[+x.dataset.x]=null;save();renderTeam();return}
+  const s=e.target.closest(".slot");if(s){sel=sel===+s.dataset.i?null:+s.dataset.i;renderTeam()}
+};
+$("#col").onclick=e=>{
+  const c=e.target.closest(".cc");if(!c)return;
+  const id=c.dataset.id;
+  if(team.includes(id)){toast("Already on your team");return}
+  let i=sel!==null?sel:team.indexOf(null);
+  if(i<0){toast("Team is full. Remove a fighter or pick a slot to swap.");return}
+  team[i]=id;sel=team.indexOf(null);if(sel<0)sel=null;save();renderTeam();
+};
+
+// ---- Nav ----
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+  $("#store").hidden=b.dataset.tab!=="store";$("#team").hidden=b.dataset.tab!=="team";
+});
+$("#packs").onclick=e=>{const b=e.target.closest("[data-pack]");if(b)openPack(+b.dataset.pack)};
+$("#reset").onclick=()=>{if(confirm("Delete your whole collection and team?")){own={};team=Array(7).fill(null);sel=null;save();renderStore();renderTeam()}};
+(async()=>{
+  let d;
+  try{const r=await fetch("cards/cards.json",{cache:"no-cache"});if(!r.ok)throw 0;d=await r.json();if(!Array.isArray(d.cards)||!Array.isArray(d.shows))throw 0}
+  catch(e){d=fromFallback();$("#src").hidden=false}
+  build(d);
+  team=team.map(id=>id&&BY[id]&&own[id]?id:null);
+  renderStore();renderTeam();
+})();
+</script>
+</body>
+</html>
