@@ -63,7 +63,7 @@
 {"id":"senku","name":"Senku","show":"dr-stone","vibe":"Hero","spd":45,"str":33,"ski":69,"log":93,"hp":410,"ico":"🧪"},
 {"id":"tsukasa","name":"Tsukasa","show":"dr-stone","vibe":"Neutral","spd":80,"str":80,"ski":78,"log":56,"hp":660,"ico":"🦁"},
 {"id":"kohaku","name":"Kohaku","show":"dr-stone","vibe":"Neutral","spd":83,"str":74,"ski":82,"log":43,"hp":500,"ico":"🦍"},
-{"id":"deku","name":"deku","show":"my-hero-academia","vibe":"Hero","spd":93,"str":92,"ski":80,"log":82,"hp":500,"ico":"🥦"},
+{"id":"deku","name":"Deku","show":"my-hero-academia","vibe":"Hero","spd":93,"str":92,"ski":80,"log":82,"hp":500,"ico":"🥦"},
 {"id":"all-might","name":"All Might","show":"my-hero-academia","vibe":"Hero","spd":94,"str":96,"ski":75,"log":55,"hp":900,"ico":"✌️"},
 {"id":"tomura-shigaraki","name":"Tomura Shigaraki","show":"my-hero-academia","vibe":"Broken","spd":70,"str":65,"ski":91,"log":80,"hp":780,"ico":"🖐️"},
 {"id":"lloyd-garmadon","name":"Lloyd Garmadon","show":"ninjago","vibe":"Hero","spd":65,"str":86,"ski":93,"log":86,"hp":650,"ico":"💚"},
