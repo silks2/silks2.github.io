@@ -184,7 +184,7 @@ function chem(){
 
 // ---- Packs ----
 function renderStore(){
-  $("#packs").innerHTML=PACKS.map((p,i)=>`<div class="pack"><div class="big">${esc(p.ico)}</div><h3>${esc(p.name)}</h3><p>${p.count} fighters · 🪙 ${p.cost} (free for now)</p><div class="odds">${p.odds.map(o=>`Overall ${o.min}–${o.max}: ${pct(p,o)}%`).join("<br>")}</div><button class="btn" data-pack="${i}">Open pack</button></div>`).join("");
+  $("#packs").innerHTML=PACKS.map((p,i)=>`<div class="pack"><div class="big">${esc(p.ico)}</div><h3>${esc(p.name)}</h3><p>${p.count} fighters · 🪙 ${p.cost} (free for now)</p><button class="btn" data-pack="${i}">Open pack</button></div>`).join("");
   $("#owned").textContent=`Collection: ${Object.keys(own).length} of ${CARDS.length} different fighters`;
 }
 const pct=(p,o)=>+(o.chance/p.odds.reduce((s,x)=>s+x.chance,0)*100).toFixed(1);
